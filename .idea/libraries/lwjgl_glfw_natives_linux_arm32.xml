@@ -1,0 +1,39 @@
+<component name="libraryTable">
+  <library name="lwjgl-glfw-natives-linux-arm32">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-glfw.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-openal-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lwjgl-opengl-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
