@@ -16,6 +16,13 @@
                 <targetPath>${basedir}/target</targetPath>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <targetPath>${basedir}/target/</targetPath>
+                <includes>
+                    <include>GameInfo.txt</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>

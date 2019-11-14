@@ -47,6 +47,8 @@ public class PlayState extends GameState {
 	public void draw(Matrix4f projectionAndViewMatrix) {
 		Graphics.enableBlending(true);
 
+		Graphics.fillRectangle(128, 128, 256, 128, Color.GREEN, projectionAndViewMatrix);
+
 		chunkWorldRenderer.cacheChunksInRange(0, 0);
 		chunkWorldRenderer.drawChunkQueue(GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
 
