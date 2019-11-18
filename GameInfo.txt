@@ -6,7 +6,7 @@
 		"window_height": "720",
 		"window_override": "true",
 
-		"use_vsync": "false"
+		"use_vsync": "true"
 		"fullscreen": "false"
 	}
 }
