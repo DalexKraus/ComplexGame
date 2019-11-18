@@ -68,6 +68,7 @@
                 <configuration>
                     <mainClass>com.complex.Main</mainClass>
                     <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                    <killAfter>-1</killAfter>
                 </configuration>
             </plugin>
         </plugins>

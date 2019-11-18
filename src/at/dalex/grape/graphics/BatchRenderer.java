@@ -7,7 +7,6 @@ import at.dalex.grape.info.Logger;
 import at.dalex.grape.toolbox.MemoryManager;
 import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.*;
 
@@ -32,9 +31,9 @@ public class BatchRenderer {
     //Maximum amount of instances to be drawn at once
     private final int MAX_INSTANCES = 100000;
 
-    // 4 for viewMat, 4 for transformMat, 2 for UV-Offset & UV-Scaling
+    // 16 for viewMat, 16 for transformMat, 12 for UVs
     // (Matrices = 4 float per row and column)
-    // [4*4 + 4*4 + 2 + 2= 50]
+    // [4*4 + 4*4 + 12 = 44 floats]
     private final int INSTANCE_DATA_LENGTH = 44;
 
     private FloatBuffer instanceBuffer;
@@ -70,7 +69,7 @@ public class BatchRenderer {
         MemoryManager.createdVBOs.add(vVBOId);
 
         /* Create FloatBuffers */
-        FloatBuffer vertexBuffer = createFloatBuffer(24);
+        FloatBuffer vertexBuffer = createFloatBuffer(12);
         instanceBuffer = createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
 
         //Create VBO used for instanced rendering
@@ -80,12 +79,12 @@ public class BatchRenderer {
         //If you want to change these, rather use a transformation matrix
         //for each instance in the vertex shader. Thank you.
         float[] vertices = {
-                0, 0,     /* UVs */   0, 0,
-                0, 1,                 0, 1,
-                1, 1,                 1, 1,
-                0, 0,                 0, 0,
-                1, 1,                 1, 1,
-                1, 0,                 1, 0
+                0, 0,
+                0, 1,
+                1, 1,
+                0, 0,
+                1, 1,
+                1, 0
         };
         vertexBuffer.put(vertices);
         vertexBuffer.flip();
@@ -96,25 +95,24 @@ public class BatchRenderer {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vVBOId);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexBuffer, GL15.GL_DYNAMIC_DRAW);
         GL20.glEnableVertexAttribArray(0);
-        GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, 0, 0); //4 coords for each vertex
+        GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 0, 0); //2 coords for each vertex
         GL20.glDisableVertexAttribArray(0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
         //View matrix (mat4)
-        addInstancedAttribute(vaoId, instanceVBOId, 1, 4, INSTANCE_DATA_LENGTH, 0);
-        addInstancedAttribute(vaoId, instanceVBOId, 2, 4, INSTANCE_DATA_LENGTH, 4);
-        addInstancedAttribute(vaoId, instanceVBOId, 3, 4, INSTANCE_DATA_LENGTH, 8);
-        addInstancedAttribute(vaoId, instanceVBOId, 4, 4, INSTANCE_DATA_LENGTH, 12);
+        addInstancedAttribute(instanceVBOId, 1, 4, INSTANCE_DATA_LENGTH, 0);
+        addInstancedAttribute(instanceVBOId, 2, 4, INSTANCE_DATA_LENGTH, 4);
+        addInstancedAttribute(instanceVBOId, 3, 4, INSTANCE_DATA_LENGTH, 8);
+        addInstancedAttribute(instanceVBOId, 4, 4, INSTANCE_DATA_LENGTH, 12);
         //Transformation matrix (mat4)
-        addInstancedAttribute(vaoId, instanceVBOId, 5, 4, INSTANCE_DATA_LENGTH, 16);
-        addInstancedAttribute(vaoId, instanceVBOId, 6, 4, INSTANCE_DATA_LENGTH, 20);
-        addInstancedAttribute(vaoId, instanceVBOId, 7, 4, INSTANCE_DATA_LENGTH, 24);
-        addInstancedAttribute(vaoId, instanceVBOId, 8, 4, INSTANCE_DATA_LENGTH, 28);
-        //UV-Data (1 for each vertex, 6 in the case of a rectangle)
-        addInstancedAttribute(vaoId, instanceVBOId, 9,  4, INSTANCE_DATA_LENGTH, 32);
-        addInstancedAttribute(vaoId, instanceVBOId, 10, 4, INSTANCE_DATA_LENGTH, 36);
-        addInstancedAttribute(vaoId, instanceVBOId, 11, 4, INSTANCE_DATA_LENGTH, 40);
-
+        addInstancedAttribute(instanceVBOId, 5, 4, INSTANCE_DATA_LENGTH, 16);
+        addInstancedAttribute(instanceVBOId, 6, 4, INSTANCE_DATA_LENGTH, 20);
+        addInstancedAttribute(instanceVBOId, 7, 4, INSTANCE_DATA_LENGTH, 24);
+        addInstancedAttribute(instanceVBOId, 8, 4, INSTANCE_DATA_LENGTH, 28);
+        //UV-Data (for each vertex, 6 in the case of a rectangle = 12 uv coords)
+        addInstancedAttribute(instanceVBOId, 9,  4, INSTANCE_DATA_LENGTH, 32);
+        addInstancedAttribute(instanceVBOId, 10, 4, INSTANCE_DATA_LENGTH, 36);
+        addInstancedAttribute(instanceVBOId, 11, 4, INSTANCE_DATA_LENGTH, 40);
         GL30.glBindVertexArray(0);
     }
 
@@ -145,14 +143,12 @@ public class BatchRenderer {
         updateVBO(vboId, data, buffer, GL15.GL_STREAM_DRAW);
     }
 
-    private void addInstancedAttribute(int vao, int vbo, int attribute, int dataSize, int instancedDataLength, int offset) {
+    private void addInstancedAttribute(int vbo, int attribute, int dataSize, int instancedDataLength, int offset) {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-        GL30.glBindVertexArray(vao);
         //Multiplied by 4 (4 bytes for each float)
         GL20.glVertexAttribPointer(attribute, dataSize, GL11.GL_FLOAT, false, instancedDataLength * 4, offset * 4);
         GL33.glVertexAttribDivisor(attribute, 1); //Mark VBO to be updated every single instance step
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-        GL30.glBindVertexArray(0);
     }
 
     private void storeMatrixInFloatArray(Matrix4f matrix, float[] vboData) {
@@ -180,11 +176,10 @@ public class BatchRenderer {
     }
 
     public void drawQueue(Matrix4f projection) {
-        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         shader.start();
 
         GL30.glBindVertexArray(vaoId);
-        for (int i = 0; i <= 10; i++)
+        for (int i = 0; i <= 12; i++)
             GL20.glEnableVertexAttribArray(i);
 
         //Bind renderer's atlas texture
@@ -197,18 +192,17 @@ public class BatchRenderer {
         //Combine all data into one (giant) float array
         instanceDataPos = 0;
         for (BatchInfo batch : batchQueue) {
+            //Store matrices
             storeMatrixInFloatArray(projection, instanceVBOData);
             storeMatrixInFloatArray(batch.transformationMatrix, instanceVBOData);
-            float[] uvData = null;
+
+            //Store UV-Data
+            float[] uvData;
             if (batch.uvSource == UVSource.UV_USE_CELL) uvData = calculateUVData(batch.cellId);
             else {
                 //TODO: add algorithm for src calculation
-//                uvData = new float[] { batch.u1, batch.v1, batch.u2, batch.v2 };
-                uvData = new float[4];
+                uvData = new float[12];
             }
-
-            System.out.println("Data: " + Arrays.toString(uvData));
-
             System.arraycopy(uvData, 0, instanceVBOData, instanceDataPos, uvData.length);
             instanceDataPos += uvData.length;
         }
@@ -218,7 +212,7 @@ public class BatchRenderer {
         GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 6, batchQueue.size());
         MemoryManager.drawCallsAmount++;
 
-        for (int i = 0; i <= 10; i++)
+        for (int i = 0; i <= 12; i++)
             GL20.glDisableVertexAttribArray(i);
 
         GL30.glBindVertexArray(0);
@@ -229,6 +223,7 @@ public class BatchRenderer {
         batchQueue.add(new BatchInfo(x, y, width, height, cellId));
     }
 
+    //TODO: Check sub-method call
     public void queueRender(int x, int y, int width, int height) {
         queueRender(x, y, width, height, 0, 0, 1, 1);
     }
