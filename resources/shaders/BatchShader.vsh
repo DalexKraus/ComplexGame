@@ -6,6 +6,7 @@ layout (location = 0) in vec2 vertex; //vec2 position
 layout (location = 1) in mat4 projectionMatrix;
 layout (location = 5) in mat4 transformationMatrix;
 
+//Works with multiple arrays
 layout (location = 9) in float uvCoordinates[3];
 layout (location = 10) in float uvCoordinates2[3];
 layout (location = 11) in float uvCoordinates3[3];
