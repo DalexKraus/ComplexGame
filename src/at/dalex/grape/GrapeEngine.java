@@ -15,7 +15,7 @@ import at.dalex.grape.resource.DefaultResources;
 import at.dalex.grape.tiled.TilesetManager;
 import at.dalex.grape.toolbox.OSManager;
 
-import java.awt.Font;
+import java.awt.*;
 
 public abstract class GrapeEngine implements DisplayCallback {
 
@@ -81,21 +81,19 @@ public abstract class GrapeEngine implements DisplayCallback {
 		gameStateManager.draw(camera.getProjectionAndViewMatrix());
 
 		Graphics.enableBlending(true);
-		/*
-		debugFont.drawText("GrapeEngine", 0, 0, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("Version 0.8", 0, 12, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("Using Lua Integration [BETA]", 0, 36, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("FPS: " + displayManager.getTimer().getFPS(), 0, 60, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("Uptime: " + (int) displayManager.getTimer().getTime() + " Sek.", 0, 72, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("OpenGL Resources", 0, 96, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("--------------------------------", 0, 102, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("Textures: " + MemoryManager.createdTextures.size(), 0, 120, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("VAOs:" + MemoryManager.createdVAOs.size(), 0, 132, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("VBOs: " + MemoryManager.createdVBOs.size(), 0, 144, camera.getProjectionAndViewMatrix());
-		debugFont.drawText("DrawCalls: " + MemoryManager.drawCallsAmount, 0, 156, camera.getProjectionAndViewMatrix());
-		*/
-		MemoryManager.drawCallsAmount = 0;
-		MemoryManager.verticesAmount = 0;
+//		debugFont.drawText("GrapeEngine", 0, 0, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("Version 0.8", 0, 12, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("Using Lua Integration [BETA]", 0, 36, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("FPS: " + displayManager.getTimer().getFPS(), 0, 60, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("Uptime: " + (int) displayManager.getTimer().getTime() + " Sek.", 0, 72, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("OpenGL Resources", 0, 96, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("--------------------------------", 0, 102, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("Textures: " + MemoryManager.createdTextures.size(), 0, 120, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("VAOs:" + MemoryManager.createdVAOs.size(), 0, 132, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("VBOs: " + MemoryManager.createdVBOs.size(), 0, 144, camera.getProjectionAndViewMatrix());
+//		debugFont.drawText("DrawCalls: " + MemoryManager.drawCallsAmount, 0, 156, camera.getProjectionAndViewMatrix());
+//		MemoryManager.drawCallsAmount = 0;
+//		MemoryManager.verticesAmount = 0;
 
 		Graphics.enableBlending(false);
 	}

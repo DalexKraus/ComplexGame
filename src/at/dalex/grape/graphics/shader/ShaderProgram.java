@@ -52,10 +52,16 @@ public abstract class ShaderProgram {
         glBindAttribLocation(programID, attribute, variableName);
     }
 
-    private static int loadShader(String shaderCode, int type) {
+    private int loadShader(String shaderCode, int type) {
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderCode);
         glCompileShader(shaderID);
+        if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
+            System.err.println("\n\nAn error occured while compiling '"
+                            + this.getClass().getSimpleName() + "', " + (type == GL_VERTEX_SHADER ? "[vsh]" : "[fsh]"));
+
+            System.err.println("Error-Log: \n" + glGetShaderInfoLog(shaderID));
+        }
         return shaderID;
     }
 
