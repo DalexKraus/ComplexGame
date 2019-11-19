@@ -165,13 +165,23 @@ public class BatchRenderer {
         float normalizedCellHeight = 1.0f / textureAtlas.getNumberOfRows();
         float x = cellX * normalizedCellWidth;
         float y = cellY * normalizedCellHeight;
+//        return new float[] {
+//                x, 1 - y + normalizedCellHeight,
+//                x, 1 - y,
+//                x + normalizedCellWidth, 1 - y,
+//                x, y + normalizedCellHeight,
+//                x + normalizedCellWidth, y,
+//                x + normalizedCellWidth, y + normalizedCellHeight
+//        };
+
         return new float[] {
-                x, y,
-                x, y + normalizedCellHeight,
-                x + normalizedCellWidth, y + normalizedCellHeight,
-                x, y,
-                x + normalizedCellWidth, y + normalizedCellHeight,
-                x + normalizedCellWidth, y
+                0, 0,
+                0, 0,
+                0, 0,
+
+                0, 0,
+                0, 0,
+                1, 0
         };
     }
 
@@ -179,7 +189,7 @@ public class BatchRenderer {
         shader.start();
 
         GL30.glBindVertexArray(vaoId);
-        for (int i = 0; i <= 12; i++)
+        for (int i = 0; i <= 11; i++)
             GL20.glEnableVertexAttribArray(i);
 
         //Bind renderer's atlas texture
@@ -203,6 +213,7 @@ public class BatchRenderer {
                 //TODO: add algorithm for src calculation
                 uvData = new float[12];
             }
+            System.out.println("Data: " + Arrays.toString(uvData));
             System.arraycopy(uvData, 0, instanceVBOData, instanceDataPos, uvData.length);
             instanceDataPos += uvData.length;
         }
@@ -212,7 +223,7 @@ public class BatchRenderer {
         GL31.glDrawArraysInstanced(GL11.GL_TRIANGLES, 0, 6, batchQueue.size());
         MemoryManager.drawCallsAmount++;
 
-        for (int i = 0; i <= 12; i++)
+        for (int i = 0; i <= 11; i++)
             GL20.glDisableVertexAttribArray(i);
 
         GL30.glBindVertexArray(0);
