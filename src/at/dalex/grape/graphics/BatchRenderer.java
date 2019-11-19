@@ -69,7 +69,7 @@ public class BatchRenderer {
         MemoryManager.createdVBOs.add(vVBOId);
 
         /* Create FloatBuffers */
-        FloatBuffer vertexBuffer = createFloatBuffer(12);
+        FloatBuffer vertexBuffer = createFloatBuffer(24);
         instanceBuffer = createFloatBuffer(MAX_INSTANCES * INSTANCE_DATA_LENGTH);
 
         //Create VBO used for instanced rendering
@@ -79,12 +79,12 @@ public class BatchRenderer {
         //If you want to change these, rather use a transformation matrix
         //for each instance in the vertex shader. Thank you.
         float[] vertices = {
-                0, 0,
-                0, 1,
-                1, 1,
-                0, 0,
-                1, 1,
-                1, 0
+                0, 0,  0, 1,
+                0, 1,  0, 0,
+                1, 1,  1, 0,
+                0, 0,  0, 1,
+                1, 1,  1, 0,
+                1, 0,  1, 1
         };
         vertexBuffer.put(vertices);
         vertexBuffer.flip();
@@ -109,10 +109,8 @@ public class BatchRenderer {
         addInstancedAttribute(instanceVBOId, 6, 4, INSTANCE_DATA_LENGTH, 20);
         addInstancedAttribute(instanceVBOId, 7, 4, INSTANCE_DATA_LENGTH, 24);
         addInstancedAttribute(instanceVBOId, 8, 4, INSTANCE_DATA_LENGTH, 28);
-        //UV-Data (for each vertex, 6 in the case of a rectangle = 12 uv coords)
-        addInstancedAttribute(instanceVBOId, 9,  4, INSTANCE_DATA_LENGTH, 32);
-        addInstancedAttribute(instanceVBOId, 10, 4, INSTANCE_DATA_LENGTH, 36);
-        addInstancedAttribute(instanceVBOId, 11, 4, INSTANCE_DATA_LENGTH, 40);
+        //UV-Coord Translation (vec2)
+        addInstancedAttribute(instanceVBOId, 9, 2, INSTANCE_DATA_LENGTH, 32);
         GL30.glBindVertexArray(0);
     }
 
@@ -175,13 +173,13 @@ public class BatchRenderer {
 //        };
 
         return new float[] {
+                0, 1,
                 0, 0,
-                0, 0,
-                0, 0,
+                1, 0,
 
                 0, 0,
-                0, 0,
-                1, 0
+                1, 0,
+                1, 1
         };
     }
 
@@ -213,7 +211,6 @@ public class BatchRenderer {
                 //TODO: add algorithm for src calculation
                 uvData = new float[12];
             }
-            System.out.println("Data: " + Arrays.toString(uvData));
             System.arraycopy(uvData, 0, instanceVBOData, instanceDataPos, uvData.length);
             instanceDataPos += uvData.length;
         }
