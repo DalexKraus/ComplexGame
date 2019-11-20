@@ -2,8 +2,8 @@
 	"GameInfo":
 	{
 		"title": "[OpenGL & GLFW] GrapeEngine",
-		"window_width": "2560",
-		"window_height": "1600",
+		"window_width": "1280",
+		"window_height": "720",
 		"window_override": "true",
 
 		"use_vsync": "false"

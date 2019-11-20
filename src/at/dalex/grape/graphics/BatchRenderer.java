@@ -237,14 +237,14 @@ public class BatchRenderer {
      * @return The amount of currently queued elements
      */
     public int queueSize() {
-        return this.batchQueue.size();
+        return batchQueue.size();
     }
 
     /**
      * Provides information about which uv-source should be used
      * for rendering.
      */
-    enum UVSource { UV_USE_SRC, UV_USE_CELL }
+    private enum UVSource { UV_USE_SRC, UV_USE_CELL }
 
     /**
      * Represents all information which is needed to draw

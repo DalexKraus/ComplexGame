@@ -2,6 +2,7 @@ package at.dalex.grape.graphics.graphicsutil;
 
 import java.awt.Color;
 
+import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.mesh.Model;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -124,5 +125,4 @@ public class Graphics {
 		Matrix4f transformedMatrix = new Matrix4f(projectionAndViewMatrix);				// Create a clone of the projectionAndViewMatrix because we don't want to overwrite the instance
 		return transformedMatrix.mul(transformationMatrix);								// Multiply the projectionAndViewMatrix with the transformationMatrix;
 	}	
-
 }
