@@ -1,9 +1,11 @@
 package at.dalex.grape.graphics;
 
+import at.dalex.grape.gamestatemanager.GameState;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import at.dalex.grape.graphics.shader.BatchShader;
 import at.dalex.grape.info.Logger;
+import at.dalex.grape.map.Tile;
 import at.dalex.grape.toolbox.MemoryManager;
 import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
@@ -31,10 +33,10 @@ public class BatchRenderer {
     //Maximum amount of instances to be drawn at once
     private final int MAX_INSTANCES = 100000;
 
-    // 16 for viewMat, 16 for transformMat, 12 for UVs
+    // 16 for viewMat, 16 for transformMat, 2 for uv translation, 2 for uv scaling
     // (Matrices = 4 float per row and column)
-    // [4*4 + 4*4 + 12 = 44 floats]
-    private final int INSTANCE_DATA_LENGTH = 44;
+    // [4*4 + 4*4 + 2 + 2 = 36 floats]
+    private final int INSTANCE_DATA_LENGTH = 36;
 
     private FloatBuffer instanceBuffer;
 
@@ -78,13 +80,15 @@ public class BatchRenderer {
         //Calculate Vertex-Data
         //If you want to change these, rather use a transformation matrix
         //for each instance in the vertex shader. Thank you.
+
+        //When changing these values, don't forget to change the attrib's pointer as well.
         float[] vertices = {
-                0, 0,  0, 1,
-                0, 1,  0, 0,
-                1, 1,  1, 0,
-                0, 0,  0, 1,
-                1, 1,  1, 0,
-                1, 0,  1, 1
+                0, 0,  0, 0,
+                0, 1,  0, 1,
+                1, 1,  1, 1,
+                0, 0,  0, 0,
+                1, 1,  1, 1,
+                1, 0,  1, 0
         };
         vertexBuffer.put(vertices);
         vertexBuffer.flip();
@@ -95,7 +99,7 @@ public class BatchRenderer {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vVBOId);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexBuffer, GL15.GL_DYNAMIC_DRAW);
         GL20.glEnableVertexAttribArray(0);
-        GL20.glVertexAttribPointer(0, 2, GL11.GL_FLOAT, false, 0, 0); //2 coords for each vertex
+        GL20.glVertexAttribPointer(0, 4, GL11.GL_FLOAT, false, 0, 0); //4 coords for each vertex
         GL20.glDisableVertexAttribArray(0);
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
@@ -111,6 +115,8 @@ public class BatchRenderer {
         addInstancedAttribute(instanceVBOId, 8, 4, INSTANCE_DATA_LENGTH, 28);
         //UV-Coord Translation (vec2)
         addInstancedAttribute(instanceVBOId, 9, 2, INSTANCE_DATA_LENGTH, 32);
+        //UV-Coord Scale Factor (vec2) - manipulates the dimensions of the uv-rectangle
+        addInstancedAttribute(instanceVBOId, 10, 2, INSTANCE_DATA_LENGTH, 34);
         GL30.glBindVertexArray(0);
     }
 
@@ -161,25 +167,9 @@ public class BatchRenderer {
         //Calculate cell's width and height, also functioning as scale at the same time
         float normalizedCellWidth = 1.0f / textureAtlas.getNumberOfColumns();
         float normalizedCellHeight = 1.0f / textureAtlas.getNumberOfRows();
-        float x = cellX * normalizedCellWidth;
-        float y = cellY * normalizedCellHeight;
-//        return new float[] {
-//                x, 1 - y + normalizedCellHeight,
-//                x, 1 - y,
-//                x + normalizedCellWidth, 1 - y,
-//                x, y + normalizedCellHeight,
-//                x + normalizedCellWidth, y,
-//                x + normalizedCellWidth, y + normalizedCellHeight
-//        };
-
         return new float[] {
-                0, 1,
-                0, 0,
-                1, 0,
-
-                0, 0,
-                1, 0,
-                1, 1
+                cellX * normalizedCellWidth, cellY * normalizedCellHeight,  //UV Translation vec2
+                normalizedCellWidth, normalizedCellHeight                   //UV Scale vec2
         };
     }
 
@@ -205,12 +195,7 @@ public class BatchRenderer {
             storeMatrixInFloatArray(batch.transformationMatrix, instanceVBOData);
 
             //Store UV-Data
-            float[] uvData;
-            if (batch.uvSource == UVSource.UV_USE_CELL) uvData = calculateUVData(batch.cellId);
-            else {
-                //TODO: add algorithm for src calculation
-                uvData = new float[12];
-            }
+            float[] uvData  = batch.uvSource == UVSource.UV_USE_CELL ? calculateUVData(batch.cellId) : batch.uvData;
             System.arraycopy(uvData, 0, instanceVBOData, instanceDataPos, uvData.length);
             instanceDataPos += uvData.length;
         }
@@ -269,10 +254,10 @@ public class BatchRenderer {
      */
     class BatchInfo {
 
-        public UVSource uvSource;
-        public Matrix4f transformationMatrix;
-        public float u1, v1, u2, v2;
-        public int cellId;
+        UVSource uvSource;
+        Matrix4f transformationMatrix;
+        float[] uvData;
+        int cellId;
 
         BatchInfo(int x, int y, int width, int height, int cellId) {
             this(x, y, width, height, 0.0f, 0.0f, 0.0f, 0.0f);  //Ignore UVs as we're calculating them later
@@ -280,14 +265,11 @@ public class BatchRenderer {
             this.uvSource = UVSource.UV_USE_CELL;
         }
 
-        BatchInfo(int x, int y, int width, int height, float u1, float v1, float u2, float v2) {
+        BatchInfo(int x, int y, int width, int height, float uvRectX, float uvRectY, float uvRectWidth, float uvRectHeight) {
             Vector3f translation = new Vector3f(x, y, 0);
             transformationMatrix = Toolbox.createTransformationMatrix(translation, 0.0f, 0.0f, 0.0f, 1.0f);
             transformationMatrix = transformationMatrix.scale((float) width, (float) height, 1.0f);
-            this.u1 = u1;
-            this.v1 = v1;
-            this.u2 = u2;
-            this.v2 = v2;
+            this.uvData = new float[] { uvRectX, uvRectY, uvRectWidth, uvRectHeight };
             this.uvSource = UVSource.UV_USE_SRC;
         }
     }

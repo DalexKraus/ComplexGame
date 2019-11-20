@@ -52,8 +52,8 @@ public class PlayState extends GameState {
 	public void draw(Matrix4f projectionAndViewMatrix) {
 		Graphics.enableBlending(true);
 
-//		chunkWorldRenderer.cacheChunksInRange(0, 0);
-//		chunkWorldRenderer.drawChunkQueue(GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
+		chunkWorldRenderer.cacheChunksInRange(0, 0);
+		chunkWorldRenderer.drawChunkQueue(GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix());
 
 //		for (Entity entity : entities) {
 //			entity.draw(GrapeEngine.getEngine().getCamera().getProjectionMatrix());
@@ -61,12 +61,6 @@ public class PlayState extends GameState {
 
 //		font.drawText("Hello World!", 0, 0, projectionAndViewMatrix);
 
-		batchRenderer.queueRender(128, 128, 64, 64, 1);
-//		batchRenderer.queueRender(64, 128, 64, 64, 0);
-//		batchRenderer.queueRender(512, 128, 64, 64, 3);
-//		batchRenderer.queueRender(128, 256, 64, 64, 5);
-		batchRenderer.drawQueue(projectionAndViewMatrix);
-		batchRenderer.flush();
 
 		Graphics.enableBlending(false);
 	}
