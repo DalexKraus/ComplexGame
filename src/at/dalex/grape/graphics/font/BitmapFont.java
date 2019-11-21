@@ -1,7 +1,6 @@
 package at.dalex.grape.graphics.font;
 
 import at.dalex.grape.graphics.BatchRenderer;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
 import at.dalex.grape.graphics.graphicsutil.Image;
 import at.dalex.grape.graphics.graphicsutil.ImageUtils;
 import org.joml.Matrix4f;
@@ -17,8 +16,11 @@ import static java.awt.Font.PLAIN;
 public class BitmapFont {
 
     private final Map<Character, Glyph> glyphs;
-    private Image atlasImage;
     private BatchRenderer glyphRenderer;
+    private Image atlasImage;
+    private int fontSize;
+
+    private int ATLAS_FONT_SIZE = 128;
 
     public BitmapFont(int size, boolean antiAlias) {
         this(new Font(MONOSPACED, PLAIN, size), antiAlias);
@@ -31,15 +33,16 @@ public class BitmapFont {
     }
 
     private Image createFontTexture(Font font, boolean antiAlias) {
-        BufferedImage image = new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB);
+        this.fontSize = font.getSize();
+        //Change atlas' font size to 128px for high resolution
+        Font atlasFont = new Font(font.getFontName(), font.getStyle(), ATLAS_FONT_SIZE);
+        BufferedImage image = new BufferedImage(2048, 2048, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
-        int x = 0;
-        int y = 0;
+        int x = 0, y = 0;
         for (int i = 32; i < 256; i++) {
-
             char character = (char) i;
-            BufferedImage charImage = createCharImage(new Font(font.getFontName(), font.getStyle(), 128), character, antiAlias);
+            BufferedImage charImage = createCharImage(atlasFont, character, antiAlias);
             //Unable to create char image, continue
             if (charImage == null) continue;
 
@@ -90,6 +93,7 @@ public class BitmapFont {
     }
 
     public void drawQueuedText(String text, int x, int y) {
+        float scaleFactor = getFontSize() / ATLAS_FONT_SIZE;
         for (int i = 0; i < text.length(); i++) {
             Glyph glyph = glyphs.get(text.charAt(i));
             float normalizedWidth = 1.0f / atlasImage.getWidth();
@@ -101,9 +105,9 @@ public class BitmapFont {
             float uvW = glyph.width  * normalizedWidth * 2f;
             float uvH = glyph.height * normalizedHeight / 2.2f;
 
-            //TODO: atlas should always be rendered at font size 128, while the text is scaled down to the passed font size.
-            //TODO: Also, the text should be anti-aliased.
-            glyphRenderer.queueRender((int) ((x + i * (glyph.width / 2)) * 0.25f), (int) (y * 0.25f), (int) ((glyph.width / 2) * 0.25f), (int) ((glyph.height / 2) * 0.25f),
+            //TODO: Should be anti-aliased.
+            glyphRenderer.queueRender(x + (int) (i * (glyph.width / 2) * scaleFactor), y,
+                    (int) ((glyph.width / 2) * scaleFactor), (int) ((glyph.height / 2) * scaleFactor),
                     uvX, uvY, uvW, uvH);
         }
     }
@@ -116,5 +120,9 @@ public class BitmapFont {
     public void drawQueue(Matrix4f projectionAndViewMatrix) {
         glyphRenderer.drawQueue(projectionAndViewMatrix);
         glyphRenderer.flush();
+    }
+
+    public int getFontSize() {
+        return this.fontSize;
     }
 }
