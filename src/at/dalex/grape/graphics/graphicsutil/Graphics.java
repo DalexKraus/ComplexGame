@@ -5,6 +5,7 @@ import java.awt.Color;
 import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.mesh.Model;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
@@ -71,6 +72,21 @@ public class Graphics {
 	public static void drawImage(Image image, int x, int y, int width, int height, Matrix4f projectionAndViewMatrix) {
 		drawImage(image.getTextureId(), x, y, width, height, projectionAndViewMatrix);
 	}
+
+	/**
+	 * Draws an {@link Image} at the given X Y Coordinates.
+	 * Set the desired width and height using those parameters.
+	 *
+	 * @param image The {@link Image} you want to be drawn
+	 * @param x The target X-coordinate
+	 * @param y The target Y-coordinate
+	 * @param width The desired width
+	 * @param height The desired height
+	 * @param rotZ The desired angle in degrees.
+	 */
+	public static void drawRotatedImage(Image image, int x, int y, int width, int height, float rotZ, Matrix4f projectionAndViewMatrix) {
+		drawRotatedImage(image.getTextureId(), x, y, width, height, rotZ, projectionAndViewMatrix);
+	}
 	
 	/**
 	 * Draws an {@link Image} at the given X Y Coordinates.
@@ -83,7 +99,22 @@ public class Graphics {
 	 * @param height The desired height
  	 */
 	public static void drawImage(int textureId, int x, int y, int width, int height, Matrix4f projectionAndViewMatrix) {
-		Matrix4f matrices = transformMatrix(projectionAndViewMatrix, x, y, width, height, 0f);
+		drawRotatedImage(textureId, x, y, width, height, 0f, projectionAndViewMatrix);
+	}
+
+	/**
+	 * Draws an rotated {@link Image} at the given X Y Coordinates.
+	 * Set the desired width and height using those parameters.
+	 *
+	 * @param textureId The id of the texture you want to be drawn
+	 * @param x The target X-coordinate
+	 * @param y The target Y-coordinate
+	 * @param width The desired width
+	 * @param height The desired height
+	 * @param rotZ The desired angle in degrees
+	 */
+	public static void drawRotatedImage(int textureId, int x, int y, int width, int height, float rotZ, Matrix4f projectionAndViewMatrix) {
+		Matrix4f matrices = transformMatrix(projectionAndViewMatrix, x, y, width, height, rotZ);
 		imageShader.drawMesh(new TexturedModel(defaultRectangleModel, textureId), matrices);
 	}
 
@@ -118,11 +149,19 @@ public class Graphics {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		} else GL11.glDisable(GL11.GL_BLEND);
 	}
-	
+
 	private static Matrix4f transformMatrix(Matrix4f projectionAndViewMatrix, int x, int y, int width, int height, float rZ) {
-		Matrix4f transformationMatrix = Toolbox.createTransformationMatrix(
-				new Vector3f(x / 2, y / 2, 0), 0f, 0f, rZ, width / 2, height / 2, 1); 	//Create a transformation matrix
-		Matrix4f transformedMatrix = new Matrix4f(projectionAndViewMatrix);				// Create a clone of the projectionAndViewMatrix because we don't want to overwrite the instance
-		return transformedMatrix.mul(transformationMatrix);								// Multiply the projectionAndViewMatrix with the transformationMatrix;
+		float scaleX = width / 2f;
+		float scaleY = height / 2f;
+
+		Matrix4f transformationMatrix = new Matrix4f();
+		transformationMatrix.translate(x / 2f, y / 2f, 0);
+		transformationMatrix.rotateZ((float) Math.toRadians(rZ));
+		transformationMatrix.translate(-scaleX / 2, -scaleY / 2f, 0.0f);
+		transformationMatrix.scale(scaleX, scaleY, 1.0f);
+
+		Matrix4f transformedMatrix = new Matrix4f(projectionAndViewMatrix);
+		transformedMatrix.mul(transformationMatrix);
+		return transformedMatrix;
 	}	
 }

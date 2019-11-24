@@ -7,7 +7,7 @@ import org.joml.Vector2f;
 public interface Input {
 	
 	boolean[] keys = new boolean[65536];
-	ArrayList<Integer> heldKeys = new ArrayList<Integer>();
+	ArrayList<Integer> heldKeys = new ArrayList<>();
 	Vector2f mousePosition = new Vector2f(0, 0);
 	
 	static boolean isKeyDown(int keycode) {

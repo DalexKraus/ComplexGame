@@ -1,38 +1,28 @@
 package at.dalex.grape.gamestatemanager;
 
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.entity.Entity;
+import com.complex.entity.Player;
 import org.joml.Matrix4f;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
-
-import java.io.File;
+import java.util.ArrayList;
 
 public class PlayState extends GameState {
 
-	private Image playerImage;
-	private float angle = 0.0f;
+	private Player player;
+	private ArrayList<Entity> entities = new ArrayList<>();
 
 	@Override
 	public void init() {
-
-		this.playerImage = ImageUtils.loadImage(new File("textures/entity/player/player.png"));
-
+		player = new Player(128, 128);
+		entities.add(player);
 	}
 
 	@Override
 	public void draw(Matrix4f projectionAndViewMatrix) {
-		Graphics.enableBlending(true);
-
-		projectionAndViewMatrix.translate(-playerImage.getWidth() / 2.0f, -playerImage.getHeight() / 2.0f, 0.0f);
-		projectionAndViewMatrix.rotate(angle, 0.0f, 0.0f, 1.0f);
-		projectionAndViewMatrix.translate(playerImage.getWidth() / 2.0f, playerImage.getHeight() / 2.0f, 0.0f);
-
-		Graphics.drawImage(playerImage, 0, 0, 512, 512, projectionAndViewMatrix);
-		Graphics.enableBlending(false);
+		entities.forEach(entity -> entity.draw(projectionAndViewMatrix));
 	}
 
 	@Override
 	public void update(double delta) {
-		angle += 2f * delta;
+		entities.forEach(entity -> entity.update(delta));
 	}
 }

@@ -106,8 +106,8 @@ public class BitmapFont {
             float uvH = glyph.height * normalizedHeight / 2.2f;
 
             //TODO: Should be anti-aliased.
-            glyphRenderer.queueRender(x + (int) (i * (glyph.width / 2) * scaleFactor), y,
-                    (int) ((glyph.width / 2) * scaleFactor), (int) ((glyph.height / 2) * scaleFactor),
+            glyphRenderer.queueRender(x + (int) (i * (glyph.width / 2) * 0.25f), y,
+                    (int) ((glyph.width / 2) * 0.25f), (int) ((glyph.height / 2) * 0.25f),
                     uvX, uvY, uvW, uvH);
         }
     }
