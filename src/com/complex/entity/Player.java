@@ -15,13 +15,15 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Player extends Entity {
 
     /* Movement */
-    private Vector2f velocity = new Vector2f(0, 0);
-    private final float VELOCITY_FALLOFF = 1f;
-    private final float PLAYER_SPEED = 168;
+    private Vector2f acceleration = new Vector2f();
+    private Vector2f velocity = new Vector2f();
+    private final float VELOCITY_FALLOFF = 0.9995f;
+    private final float PLAYER_SPEED_CAP = 256;
+    private final float PLAYER_ACCELERATION = 1024;
 
     private float playerRotation = 0.0f;
     private Image playerImage;
-    private final int PLAYER_WIDTH = 128, PLAYER_HEIGHT = 128;
+    private final int PLAYER_WIDTH = 32, PLAYER_HEIGHT = 32;
 
     public Player(double x, double y) {
         super(x, y);
@@ -40,22 +42,44 @@ public class Player extends Entity {
     public void update(double delta) {
         handleInput();
 
+        //Apply acceleration
+        if (velocity.length() < PLAYER_SPEED_CAP) {
+            velocity.x += (float) (acceleration.x * delta);
+            velocity.y += (float) (acceleration.y * delta);
+        }
+
         //Apply velocity to position
         double newX = getX() + velocity.x * delta;
         double newY = getY() + velocity.y * delta;
         setX(newX);
         setY(newY);
+
+        //Apply velocity falloff
+        float velocityFalloffFactor = (float) (1f - VELOCITY_FALLOFF * delta);
+        velocity.mul(velocityFalloffFactor);
     }
 
     private void handleInput() {
-        if (Input.isKeyDown(GLFW_KEY_W))
-            velocity.y = -PLAYER_SPEED;
-        else if (Input.isKeyDown(GLFW_KEY_S))
-            velocity.y = PLAYER_SPEED;
-        else if (Input.isKeyDown(GLFW_KEY_A))
-            velocity.x = -PLAYER_SPEED;
-        else if (Input.isKeyDown(GLFW_KEY_D))
-            velocity.x = PLAYER_SPEED;
+        boolean movementKeyDown = false;
+        if (Input.isKeyDown(GLFW_KEY_W)) {
+            acceleration.y = -PLAYER_ACCELERATION;
+            movementKeyDown = true;
+        }
+        if (Input.isKeyDown(GLFW_KEY_S)) {
+            acceleration.y = PLAYER_ACCELERATION;
+            movementKeyDown = true;
+        }
+        if (Input.isKeyDown(GLFW_KEY_A)) {
+            acceleration.x = -PLAYER_ACCELERATION;
+            movementKeyDown = true;
+        }
+        if (Input.isKeyDown(GLFW_KEY_D)) {
+            acceleration.x = PLAYER_ACCELERATION;
+            movementKeyDown = true;
+        }
+
+        if (!movementKeyDown)
+            acceleration.set(0, 0);
 
         //Update player rotation
         float mouseX = Input.getMousePosition().x;

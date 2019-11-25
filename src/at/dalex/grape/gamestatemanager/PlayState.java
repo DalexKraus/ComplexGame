@@ -12,7 +12,7 @@ public class PlayState extends GameState {
 
 	@Override
 	public void init() {
-		player = new Player(128, 128);
+		player = new Player(512, 512);
 		entities.add(player);
 	}
 

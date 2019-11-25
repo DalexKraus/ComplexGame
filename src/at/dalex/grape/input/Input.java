@@ -17,7 +17,7 @@ public interface Input {
 	static boolean isButtonPressed(int button) {
 		return heldKeys.contains(button);
 	}
-	
+
 	static Vector2f getMousePosition() {
 		return mousePosition;
 	}
