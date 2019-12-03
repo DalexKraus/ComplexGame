@@ -6,8 +6,8 @@ import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.graphics.Tileset;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
-import at.dalex.grape.graphics.graphicsutil.Image;
+import at.dalex.grape.graphics.Graphics;
+import at.dalex.grape.graphics.Image;
 /**
  * Created by Da vid on 20.10.2017.
  */

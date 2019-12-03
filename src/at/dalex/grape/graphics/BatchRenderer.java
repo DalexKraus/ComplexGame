@@ -1,11 +1,7 @@
 package at.dalex.grape.graphics;
 
-import at.dalex.grape.gamestatemanager.GameState;
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
 import at.dalex.grape.graphics.shader.BatchShader;
 import at.dalex.grape.info.Logger;
-import at.dalex.grape.map.Tile;
 import at.dalex.grape.toolbox.MemoryManager;
 import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
@@ -15,7 +11,6 @@ import org.lwjgl.opengl.*;
 import java.nio.BufferOverflowException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.lwjgl.BufferUtils.createFloatBuffer;
 

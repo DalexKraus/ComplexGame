@@ -1,8 +1,8 @@
 package at.dalex.grape.graphics.font;
 
 import at.dalex.grape.graphics.BatchRenderer;
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.Image;
+import at.dalex.grape.graphics.ImageUtils;
 import org.joml.Matrix4f;
 
 import java.awt.*;
@@ -10,8 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.awt.Font.MONOSPACED;
-import static java.awt.Font.PLAIN;
+import static java.awt.Font.*;
 
 public class BitmapFont {
 
@@ -93,7 +92,6 @@ public class BitmapFont {
     }
 
     public void drawQueuedText(String text, int x, int y) {
-        float scaleFactor = getFontSize() / ATLAS_FONT_SIZE;
         for (int i = 0; i < text.length(); i++) {
             Glyph glyph = glyphs.get(text.charAt(i));
             float normalizedWidth = 1.0f / atlasImage.getWidth();
@@ -102,7 +100,7 @@ public class BitmapFont {
             float uvX = glyph.x * normalizedWidth;
             float uvY = glyph.y * normalizedHeight;
 
-            float uvW = glyph.width  * normalizedWidth * 2f;
+            float uvW = glyph.width  * normalizedWidth  * 2f;
             float uvH = glyph.height * normalizedHeight / 2.2f;
 
             //TODO: Should be anti-aliased.

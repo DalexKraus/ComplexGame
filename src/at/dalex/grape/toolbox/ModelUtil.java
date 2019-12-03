@@ -11,6 +11,9 @@ import at.dalex.grape.graphics.mesh.Model;
 public class ModelUtil {
 
 	/**
+	 * NOTE: THIS METHOD IS DEPRECATED AND DOES NOT WORK WITH
+	 * 		 NEWLY DESIGNED GRAPHICSUTIL ANYMORE!
+	 *
 	 * Returns a new model, with the size of the given parameters.
 	 * @param x The position of the model on the x-axis
 	 * @param y The position of the model on the y-axis

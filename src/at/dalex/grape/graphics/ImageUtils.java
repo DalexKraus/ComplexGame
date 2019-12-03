@@ -1,4 +1,4 @@
-package at.dalex.grape.graphics.graphicsutil;
+package at.dalex.grape.graphics;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

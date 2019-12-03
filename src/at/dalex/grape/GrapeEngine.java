@@ -1,7 +1,7 @@
 package at.dalex.grape;
 
 import at.dalex.grape.graphics.font.BitmapFont;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
+import at.dalex.grape.graphics.Graphics;
 import at.dalex.grape.map.manager.MapManager;
 import at.dalex.grape.toolbox.MemoryManager;
 import org.lwjgl.opengl.GL11;
@@ -14,8 +14,6 @@ import at.dalex.grape.graphics.DisplayManager;
 import at.dalex.grape.resource.DefaultResources;
 import at.dalex.grape.tiled.TilesetManager;
 import at.dalex.grape.toolbox.OSManager;
-
-import java.awt.*;
 
 public abstract class GrapeEngine implements DisplayCallback {
 
@@ -60,7 +58,7 @@ public abstract class GrapeEngine implements DisplayCallback {
 		camera = new Camera(DisplayManager.windowWidth, DisplayManager.windowHeight);
 		mapManager.upateMapInformations();
 
-		debugFont = new BitmapFont(12, false);
+		debugFont = new BitmapFont(4, false);
 
 		onEnable();
 		

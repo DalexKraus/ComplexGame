@@ -50,7 +50,6 @@ public class ImageShader extends ShaderProgram {
 			getUniformLoader().load2DVector(position_atlas_offset, model.getAtlasTextureUVOffset());
 		}
 
-
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.isUsingTextureAtlas() ? model.getTextureAtlas().getTextureId() : model.getTextureId());
 		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getBaseModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);

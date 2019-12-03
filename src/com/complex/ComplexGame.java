@@ -1,6 +1,8 @@
 package com.complex;
 
 import at.dalex.grape.GrapeEngine;
+import at.dalex.grape.gamestatemanager.GameState;
+import at.dalex.grape.gamestatemanager.IntroState;
 import at.dalex.grape.gamestatemanager.PlayState;
 
 import java.util.UUID;
@@ -15,7 +17,7 @@ public class ComplexGame extends GrapeEngine {
 
     @Override
     public void onEnable() {
-        PlayState playState = new PlayState();
+        GameState playState = new PlayState();
         getGameStateManager().addGameState(playState);
         getGameStateManager().setState(playState.getId());
     }

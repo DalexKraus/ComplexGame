@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import at.dalex.grape.graphics.Animation;
-import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.ImageUtils;
 
 public abstract class LivingEntity extends Entity {
 

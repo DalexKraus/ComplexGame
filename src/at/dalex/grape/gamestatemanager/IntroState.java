@@ -7,15 +7,15 @@ import org.joml.Matrix4f;
 
 import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.graphics.DisplayManager;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.Graphics;
+import at.dalex.grape.graphics.Image;
+import at.dalex.grape.graphics.ImageUtils;
 
 public class IntroState extends GameState {
 
 	Image engineLogo;
 
-	private int alpha = 255;
+	private double alpha = 255;
 	private boolean fadein = true;
 	private boolean fadeout = false;
 	private boolean waiting = false;
@@ -35,7 +35,7 @@ public class IntroState extends GameState {
 		int x = (DisplayManager.windowWidth / 2) - (engineLogo.getWidth() / 2);
 		int y = (DisplayManager.windowHeight / 2) - (engineLogo.getHeight() / 2);
 		Graphics.drawImage(engineLogo, x, y, engineLogo.getWidth(), engineLogo.getHeight(), projectionAndViewMatrix);
-		Graphics.fillRectangle(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight, new Color(0, 0, 0, alpha), projectionAndViewMatrix);
+		Graphics.fillRectangle(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight, new Color(0, 0, 0, (int) alpha), projectionAndViewMatrix);
 		Graphics.enableBlending(false);
 	}
 
@@ -48,7 +48,7 @@ public class IntroState extends GameState {
 		else {
 			if (fadein) {
 				if (alpha >= 17) {
-					alpha -= 17;
+					alpha -= 800 * delta;
 				}
 				else {
 					fadein = false;
@@ -64,7 +64,7 @@ public class IntroState extends GameState {
 			}
 			else if (fadeout) {
 				if (alpha <= 252) {
-					alpha += 3;
+					alpha += 300 * delta;
 				}
 				else {
 					GameStateManager gst = GrapeEngine.getEngine().getGameStateManager();

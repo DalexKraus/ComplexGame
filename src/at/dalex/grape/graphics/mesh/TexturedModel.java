@@ -1,6 +1,6 @@
 package at.dalex.grape.graphics.mesh;
 
-import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
+import at.dalex.grape.graphics.TextureAtlas;
 import at.dalex.grape.toolbox.Dialog;
 import org.joml.Vector2f;
 

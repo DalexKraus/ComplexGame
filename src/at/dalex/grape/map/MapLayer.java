@@ -3,13 +3,10 @@ package at.dalex.grape.map;
 import java.util.ArrayList;
 
 import at.dalex.grape.graphics.BatchRenderer;
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.TextureAtlas;
-import org.joml.Matrix4f;
+import at.dalex.grape.graphics.Image;
 
 import at.dalex.grape.graphics.Tileset;
 import at.dalex.grape.graphics.DisplayManager;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
 
 public class MapLayer {
 

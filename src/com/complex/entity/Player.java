@@ -1,9 +1,7 @@
 package com.complex.entity;
 
 import at.dalex.grape.entity.Entity;
-import at.dalex.grape.graphics.graphicsutil.Graphics;
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.ImageUtils;
+import at.dalex.grape.graphics.*;
 import at.dalex.grape.input.Input;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -35,6 +33,7 @@ public class Player extends Entity {
         Graphics.enableBlending(true);
         Graphics.drawRotatedImage(playerImage, (int) getX(), (int) getY(),
                 PLAYER_WIDTH, PLAYER_HEIGHT, playerRotation, projectionAndViewMatrix);
+
         Graphics.enableBlending(false);
     }
 

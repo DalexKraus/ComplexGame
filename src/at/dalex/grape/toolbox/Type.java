@@ -1,5 +1,6 @@
 package at.dalex.grape.toolbox;
 
+//Unused?
 public class Type {
 	
 	/**

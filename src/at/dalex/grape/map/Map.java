@@ -3,10 +3,6 @@ package at.dalex.grape.map;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.dalex.grape.graphics.BatchRenderer;
-import at.dalex.grape.graphics.graphicsutil.Image;
-import org.joml.Matrix4f;
-
 public class Map {
 
 	private List<MapLayer> layers = new ArrayList<>();

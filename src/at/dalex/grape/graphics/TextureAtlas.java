@@ -1,4 +1,4 @@
-package at.dalex.grape.graphics.graphicsutil;
+package at.dalex.grape.graphics;
 
 public class TextureAtlas extends Image {
 

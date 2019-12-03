@@ -17,13 +17,13 @@ import at.dalex.grape.toolbox.MemoryManager;
 
 public class SolidColorShader extends ShaderProgram {
 
-	public int colorLocation;
-	public int positionHandle;
-	public int matrixHandle;
+	private int colorLocation;
+	private int positionHandle;
+	private int matrixHandle;
 
 	public SolidColorShader() {
 		super(FileContentReader.readFile("shaders/SolidColorShader.vsh"),
-				FileContentReader.readFile("shaders/SolidColorShader.fsh"));
+			  FileContentReader.readFile("shaders/SolidColorShader.fsh"));
 	}
 
 	@Override
@@ -45,17 +45,17 @@ public class SolidColorShader extends ShaderProgram {
 		GL30.glBindVertexArray(model.getVao().getID());
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(positionHandle);
-		
+
 		//Apply the projection and view transformation
 		getUniformLoader().loadMatrix(matrixHandle, projectionAndViewMatrix);
 		//Pass in the color
 		getUniformLoader().loadVector(colorLocation, new Vector4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f));
 		//Draw the triangles
 		GL11.glDrawElements(GL11.GL_TRIANGLES, model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-		
+
 		MemoryManager.verticesAmount += model.getVertexCount();
 		MemoryManager.drawCallsAmount++;
-		
+
 		//Disable vertex array
 		glDisableVertexAttribArray(positionHandle);
 		glDisableVertexAttribArray(0);

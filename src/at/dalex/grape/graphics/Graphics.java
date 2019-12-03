@@ -1,19 +1,14 @@
-package at.dalex.grape.graphics.graphicsutil;
+package at.dalex.grape.graphics;
 
 import java.awt.Color;
 
-import at.dalex.grape.graphics.BatchRenderer;
 import at.dalex.grape.graphics.mesh.Model;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.ImageShader;
 import at.dalex.grape.graphics.shader.SolidColorShader;
-import at.dalex.grape.toolbox.ModelUtil;
-import at.dalex.grape.toolbox.Toolbox;
 
 /**
  * This class represents a graphics utility for drawing
@@ -33,6 +28,14 @@ public class Graphics {
 			1, 1,
 			1, 0
 	};
+
+	/* A framebuffer's y values are inverted */
+	private static float[] fboUVs = new float[] {
+		0, 1,
+		0, 0,
+		1, 0,
+		1, 1
+	};
 	
 	private static float[] rectangleBaseVertices = new float[] {
 		0, 0, 0,
@@ -48,6 +51,9 @@ public class Graphics {
 	/* The rectangle model which is used for all rectangle drawing calls */
 	private static Model defaultRectangleModel;
 
+	/* A framebuffer's model, just a rectangle with inverted y coords for UVs */
+	private static Model frameBufferModel;
+
 	/**
 	 * Initializes the graphics utility.
 	 * This means loading and compiling shaders as well as
@@ -56,13 +62,13 @@ public class Graphics {
 	public static void init() {
 		solidColorShader = new SolidColorShader();
 		imageShader = new ImageShader();
-		defaultRectangleModel = new Model(rectangleBaseVertices, rectangleBaseIndices, rectangleUvs, 2);
+		defaultRectangleModel 	= new Model(rectangleBaseVertices, rectangleBaseIndices, rectangleUvs, 2);
+		frameBufferModel 		= new Model(rectangleBaseVertices, rectangleBaseIndices, fboUVs, 2);
 	}
 
 	/**
 	 * Draws an {@link Image} at the given X Y Coordinates.
-	 * Set the desired width and height using those parameters.
-	 * 
+	 *
 	 * @param image The {@link Image} you want to be drawn
 	 * @param x The target X-coordinate
 	 * @param y The target Y-coordinate
@@ -75,7 +81,6 @@ public class Graphics {
 
 	/**
 	 * Draws an {@link Image} at the given X Y Coordinates.
-	 * Set the desired width and height using those parameters.
 	 *
 	 * @param image The {@link Image} you want to be drawn
 	 * @param x The target X-coordinate
@@ -90,8 +95,7 @@ public class Graphics {
 	
 	/**
 	 * Draws an {@link Image} at the given X Y Coordinates.
-	 * Set the desired width and height using those parameters.
-	 * 
+	 *
 	 * @param textureId The id of the texture you want to be drawn
 	 * @param x The target X-coordinate
 	 * @param y The target Y-coordinate
@@ -104,7 +108,6 @@ public class Graphics {
 
 	/**
 	 * Draws an rotated {@link Image} at the given X Y Coordinates.
-	 * Set the desired width and height using those parameters.
 	 *
 	 * @param textureId The id of the texture you want to be drawn
 	 * @param x The target X-coordinate
@@ -129,9 +132,22 @@ public class Graphics {
 	}
 
 	/**
+	 * Draws a {@link FrameBufferObject} at the given X Y coordinates.
+	 *
+	 * @param fbo The {@link FrameBufferObject} to draw
+	 * @param x The target X-coordinate
+	 * @param y The target Y-coordinate
+	 * @param width The desired width
+	 * @param height The desired height
+	 */
+	public static void drawFrameBufferObject(FrameBufferObject fbo, int x, int y, int width, int height, Matrix4f projectionAndViewMatrix) {
+		Matrix4f matrices = transformMatrix(projectionAndViewMatrix, x, y, width, height, 0f);
+		imageShader.drawMesh(new TexturedModel(frameBufferModel, fbo.getColorTextureID()), matrices);
+	}
+
+	/**
 	 * Draws a filled rectangle at the given X Y Coordinates.
-	 * Set the desired width and height using those parameters.
-	 * 
+	 *
 	 * @param x The target X-coordinate
 	 * @param y The target Y-coordinate
 	 * @param width The desired width
@@ -150,14 +166,21 @@ public class Graphics {
 		} else GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	private static Matrix4f transformMatrix(Matrix4f projectionAndViewMatrix, int x, int y, int width, int height, float rZ) {
+	public static TexturedModel getRectangleModel(int textureId) {
+		return new TexturedModel(defaultRectangleModel, textureId);
+	}
+
+	public static Matrix4f transformMatrix(Matrix4f projectionAndViewMatrix, int x, int y, int width, int height, float rZ) {
 		float scaleX = width / 2f;
 		float scaleY = height / 2f;
 
 		Matrix4f transformationMatrix = new Matrix4f();
 		transformationMatrix.translate(x / 2f, y / 2f, 0);
+
+		transformationMatrix.translate(scaleX / 2f, scaleY / 2, 0f);
 		transformationMatrix.rotateZ((float) Math.toRadians(rZ));
 		transformationMatrix.translate(-scaleX / 2, -scaleY / 2f, 0.0f);
+
 		transformationMatrix.scale(scaleX, scaleY, 1.0f);
 
 		Matrix4f transformedMatrix = new Matrix4f(projectionAndViewMatrix);

@@ -4,9 +4,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import at.dalex.grape.graphics.graphicsutil.Image;
-import at.dalex.grape.graphics.graphicsutil.ImageUtils;
-
 /**
  * This class was written by dalex on 15.10.2017.
  * You are not permitted to edit this file.
