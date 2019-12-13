@@ -90,7 +90,7 @@ public abstract class ShaderProgram {
     private String appendGLSLConstants(String shaderCode) {
         //Pre-Multiplied constants to reduce calculations in the shaders
         ArrayList<String> shaderConstants = new ArrayList<>();
-        shaderConstants.add("#version 450");
+        shaderConstants.add("#version 460");
         shaderConstants.add("#define MATH_PI 3.1415926535897932384626433832795");
         shaderConstants.add("#define MATH_HALF_PI 1.57079632679489661923132169163975");
         shaderConstants.add("#define MATH_2_PI 6.283185307179586476925286766559");
