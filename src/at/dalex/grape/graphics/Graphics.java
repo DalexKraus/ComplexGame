@@ -10,6 +10,8 @@ import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.ImageShader;
 import at.dalex.grape.graphics.shader.SolidColorShader;
 
+import static org.lwjgl.opengl.GL11.glGetError;
+
 /**
  * This class represents a graphics utility for drawing
  * forms, images and lines with only one method call.
@@ -60,8 +62,8 @@ public class Graphics {
 	 * creating the default models.
 	 */
 	public static void init() {
-		solidColorShader = new SolidColorShader();
-		imageShader = new ImageShader();
+		solidColorShader 		= new SolidColorShader();
+		imageShader 			= new ImageShader();
 		defaultRectangleModel 	= new Model(rectangleBaseVertices, rectangleBaseIndices, rectangleUvs, 2);
 		frameBufferModel 		= new Model(rectangleBaseVertices, rectangleBaseIndices, fboUVs, 2);
 	}

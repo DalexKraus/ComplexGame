@@ -16,7 +16,7 @@ public class VelocityShader extends ShaderProgram {
     private int previousMatrixLocation;
 
     public VelocityShader() {
-        super("shaders/VelocityShader.vsh", "shaders/VelocityShader.fsh");
+        super("shaders/fx_motionblur/VelocityShader.vsh", "shaders/fx_motionblur/VelocityShader.fsh");
     }
 
     @Override

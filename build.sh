@@ -16,6 +16,7 @@ for jarfile in target/*.jar; do
     echo "Executing ..."
     java -jar "$jarfile"
     jar_found=1
+    sleep 10
   fi
 done
 

@@ -1,4 +1,4 @@
-#version 330
+
 const int MAX_SAMPLES = 16;
 
 uniform sampler2D uTexInput;

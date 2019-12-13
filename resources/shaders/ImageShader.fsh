@@ -1,4 +1,3 @@
-#version 330
 
 in vec2 pass_textureCoordinates;
 uniform sampler2D textureSampler;

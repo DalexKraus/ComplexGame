@@ -15,6 +15,8 @@ import at.dalex.grape.resource.DefaultResources;
 import at.dalex.grape.tiled.TilesetManager;
 import at.dalex.grape.toolbox.OSManager;
 
+import static org.lwjgl.opengl.GL11.glGetError;
+
 public abstract class GrapeEngine implements DisplayCallback {
 
 	private String gameLocation;
@@ -96,7 +98,7 @@ public abstract class GrapeEngine implements DisplayCallback {
 
 		Graphics.enableBlending(false);
 	}
-	
+
 	public DisplayManager getDisplayManager() {
 		return this.displayManager;
 	}

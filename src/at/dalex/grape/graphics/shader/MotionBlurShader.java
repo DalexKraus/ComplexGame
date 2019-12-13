@@ -21,7 +21,7 @@ public class MotionBlurShader extends ShaderProgram {
     private int velScaleLocation;
 
     public MotionBlurShader() {
-        super("shaders/MotionBlurShader.vsh", "shaders/MotionBlurShader.fsh");
+        super("shaders/fx_motionblur/MotionBlurShader.vsh", "shaders/fx_motionblur/MotionBlurShader.fsh");
     }
 
     @Override

@@ -1,4 +1,3 @@
-#version 330
 
 uniform mat4 projectionMatrix;
 layout (location = 0) in vec3 vertices;

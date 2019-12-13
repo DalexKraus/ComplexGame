@@ -1,4 +1,3 @@
-#version 330
 
 layout (location = 0) in vec4 vertex;                   //vec2 position, vec2 UV-Coordinate (interv. [0-1], normalized)
 layout (location = 1) in mat4 projectionMatrix;         //Combined projection and (camera-!) translation matrix.
