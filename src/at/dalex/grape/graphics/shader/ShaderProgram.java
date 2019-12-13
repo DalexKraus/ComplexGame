@@ -1,6 +1,8 @@
 package at.dalex.grape.graphics.shader;
 
 import at.dalex.grape.graphics.shader.UniformUtil.UniformLoader;
+import at.dalex.grape.info.Logger;
+import at.dalex.grape.resource.FileContentReader;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -18,13 +20,14 @@ public abstract class ShaderProgram {
     private int fragmentShaderID;
 
     public abstract void getAllUniformLocations();
-    public abstract void bindAttributes();
 
+    public abstract void bindAttributes();
     private UniformLoader uniformLoader;
-    
-    public ShaderProgram(String vertexCode, String fragmentCode) {
-        vertexShaderID = loadShader(vertexCode, GL_VERTEX_SHADER);
-        fragmentShaderID = loadShader(fragmentCode, GL_FRAGMENT_SHADER);
+
+    public ShaderProgram(String vertexFile, String fragmentFile) {
+        System.out.println("\n------ Creating new Shader: " + this.getClass().getSimpleName());
+        vertexShaderID = loadShader(vertexFile, GL_VERTEX_SHADER);
+        fragmentShaderID = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
 
         programID = glCreateProgram();
         glAttachShader(programID, vertexShaderID);
@@ -52,16 +55,21 @@ public abstract class ShaderProgram {
         glBindAttribLocation(programID, attribute, variableName);
     }
 
-    private int loadShader(String shaderCode, int type) {
+    private int loadShader(String shaderSource, int type) {
+        String shaderCode = FileContentReader.readFile(shaderSource);
+        String shaderType = (type == GL_VERTEX_SHADER ? "[vsh]" : "[fsh]");
+        System.out.printf("%s ==> Shader Source: %-50s", shaderType, shaderSource);
+
         int shaderID = glCreateShader(type);
         glShaderSource(shaderID, shaderCode);
         glCompileShader(shaderID);
         if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
-            System.err.println("\n\nAn error occured while compiling '"
-                            + this.getClass().getSimpleName() + "', " + (type == GL_VERTEX_SHADER ? "[vsh]" : "[fsh]"));
+            System.out.printf("FAIL");
 
+            System.err.println("\n\nAn error occured while compiling the shader!");
             System.err.println("Error-Log: \n" + glGetShaderInfoLog(shaderID));
         }
+        else System.out.printf("SUCCESS\n");
         return shaderID;
     }
 

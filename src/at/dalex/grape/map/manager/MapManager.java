@@ -15,7 +15,7 @@ public class MapManager {
     private ArrayList<MapInfo> mapInfoArrayList = new ArrayList<>();
 
     public void upateMapInformations() {
-        System.out.println("[MapManager] Updating map caches ...");
+        System.out.println("\n[MapManager] Updating map caches ...");
         try {
             String gameLocation = GrapeEngine.getEngine().getGameLocation();
             readMapInformations(new File(gameLocation + "/" + MAPLIST_RES_LOCATION));

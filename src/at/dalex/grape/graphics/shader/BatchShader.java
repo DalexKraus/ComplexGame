@@ -7,7 +7,7 @@ public class BatchShader extends ShaderProgram {
     public int projectionMatrixLocation;
 
     public BatchShader() {
-        super(FileContentReader.readFile("/shaders/BatchShader.vsh"), FileContentReader.readFile("/shaders/BatchShader.fsh"));
+        super("/shaders/BatchShader.vsh", "/shaders/BatchShader.fsh");
     }
 
     @Override

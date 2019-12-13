@@ -19,7 +19,7 @@ public class ImageShader extends ShaderProgram {
 	private int position_atlas_rows;
 	
 	public ImageShader() {
-		super(FileContentReader.readFile("/shaders/ImageShader.vsh"), FileContentReader.readFile("/shaders/ImageShader.fsh"));
+		super("/shaders/ImageShader.vsh", "/shaders/ImageShader.fsh");
 	}
 	
 	@Override

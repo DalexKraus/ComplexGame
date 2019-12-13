@@ -4,7 +4,6 @@ import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.graphics.FrameBufferObject;
 import at.dalex.grape.graphics.Timer;
 import at.dalex.grape.graphics.mesh.TexturedModel;
-import at.dalex.grape.resource.FileContentReader;
 import at.dalex.grape.toolbox.MemoryManager;
 import org.joml.Matrix4f;
 import static org.lwjgl.opengl.GL11.*;
@@ -22,8 +21,7 @@ public class MotionBlurShader extends ShaderProgram {
     private int velScaleLocation;
 
     public MotionBlurShader() {
-        super(FileContentReader.readFile("shaders/MotionBlurShader.vsh"),
-                FileContentReader.readFile("shaders/MotionBlurShader.fsh"));
+        super("shaders/MotionBlurShader.vsh", "shaders/MotionBlurShader.fsh");
     }
 
     @Override

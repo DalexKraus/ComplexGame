@@ -7,5 +7,5 @@ uniform sampler2D batchTexture;
 
 void main()
 {
-    fragColor = texture(batchTexture, pass_textureCoord) + vec4(0.04f, 0.04f, 0.0f, 0.05f);
+    fragColor = texture(batchTexture, pass_textureCoord);
 }

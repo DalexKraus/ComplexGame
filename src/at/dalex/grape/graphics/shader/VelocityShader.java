@@ -1,7 +1,6 @@
 package at.dalex.grape.graphics.shader;
 
 import at.dalex.grape.graphics.mesh.TexturedModel;
-import at.dalex.grape.resource.FileContentReader;
 import at.dalex.grape.toolbox.MemoryManager;
 import org.joml.Matrix4f;
 
@@ -17,8 +16,7 @@ public class VelocityShader extends ShaderProgram {
     private int previousMatrixLocation;
 
     public VelocityShader() {
-        super(FileContentReader.readFile("shaders/VelocityShader.vsh"),
-              FileContentReader.readFile("shaders/VelocityShader.fsh"));
+        super("shaders/VelocityShader.vsh", "shaders/VelocityShader.fsh");
     }
 
     @Override

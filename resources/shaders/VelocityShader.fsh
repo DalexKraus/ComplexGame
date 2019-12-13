@@ -20,9 +20,11 @@ void main()
         discard;
 
     vec2 velocity = vec2(posA.x - posB.x, posA.y - posB.y);
-    //Normalize velocity (-1|1)to fit inside the color range (0|1)
-    velocity += 1f;
-    velocity /= 2f;
+    float velocity_length = length(velocity);
 
+    //Normalize velocity
+    velocity = normalize(velocity);
+    velocity += 1.0;
+    velocity /= 2.0;
     oVelocity = vec4(velocity, 0f, 1f);
 }

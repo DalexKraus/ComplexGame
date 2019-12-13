@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>at.dalex</groupId>
-    <artifactId>maventest</artifactId>
+    <artifactId>ComplexGame</artifactId>
     <version>1.0-SNAPSHOT</version>
     <build>
         <!-- Sources and resources -->
@@ -61,16 +61,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.3.2</version>
-                <configuration>
-                    <mainClass>com.complex.Main</mainClass>
-                    <cleanupDaemonThreads>false</cleanupDaemonThreads>
-                    <killAfter>-1</killAfter>
-                </configuration>
-            </plugin>
+
+
         </plugins>
     </build>
 

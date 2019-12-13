@@ -22,8 +22,7 @@ public class SolidColorShader extends ShaderProgram {
 	private int matrixHandle;
 
 	public SolidColorShader() {
-		super(FileContentReader.readFile("shaders/SolidColorShader.vsh"),
-			  FileContentReader.readFile("shaders/SolidColorShader.fsh"));
+		super("shaders/SolidColorShader.vsh", "shaders/SolidColorShader.fsh");
 	}
 
 	@Override
