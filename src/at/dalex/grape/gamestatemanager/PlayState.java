@@ -3,6 +3,7 @@ package at.dalex.grape.gamestatemanager;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
 import at.dalex.grape.graphics.shader.MotionBlurShader;
+import at.dalex.grape.graphics.shader.VelocityDilateShader;
 import at.dalex.grape.graphics.shader.VelocityShader;
 import at.dalex.grape.input.Input;
 import at.dalex.grape.map.chunk.ChunkWorld;
@@ -26,6 +27,7 @@ public class PlayState extends GameState {
 	private FrameBufferObject velFBO;
 	private FrameBufferObject sceneFBO;
 	private VelocityShader velocityShader;
+	private VelocityDilateShader velocityDilateShader;
 	private MotionBlurShader motionBlurShader;
 	private Image playerImage;
 	private double angle = 0D;
@@ -46,6 +48,7 @@ public class PlayState extends GameState {
 		this.velFBO = new FrameBufferObject(1280, 720);
 		this.sceneFBO = new FrameBufferObject(1280, 720);
 		velocityShader = new VelocityShader();
+		velocityDilateShader = new VelocityDilateShader();
 		motionBlurShader = new MotionBlurShader();
 	}
 
@@ -71,10 +74,14 @@ public class PlayState extends GameState {
 		velFBO.unbindFrameBuffer();
 
 		Matrix4f fboTransform = Graphics.transformMatrix(projectionAndViewMatrix, 0, 0, 1280, 720, 0f);
-		if (Input.isButtonPressed(0)) {
-			motionBlurShader.drawMesh(Graphics.getRectangleModel(sceneFBO.getColorTextureID()), velFBO, fboTransform);
-		}
-		else Graphics.drawFrameBufferObject(sceneFBO, 0, 0, 1280, 720, projectionAndViewMatrix);
+
+//		Graphics.drawImage(velFBO.getColorTextureID(), 0, 0, 1280, 720, projectionAndViewMatrix);
+		velocityDilateShader.dilateVelocity(velFBO.getColorTextureID(), 1280, 720, projectionAndViewMatrix);
+
+//		if (Input.isButtonPressed(0)) {
+//			motionBlurShader.drawMesh(Graphics.getRectangleModel(sceneFBO.getColorTextureID()), velFBO, fboTransform);
+//		}
+//		else Graphics.drawFrameBufferObject(sceneFBO, 0, 0, 1280, 720, projectionAndViewMatrix);
 	}
 
 	@Override

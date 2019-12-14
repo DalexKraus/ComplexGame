@@ -47,8 +47,12 @@ public interface UniformUtil {
 	    }
 
 	    protected void load2DVector(int location, Vector2f vector) {
-	        glUniform2f(location, vector.x, vector.y);
+	        load2DVector(location, vector.x, vector.y);
 	    }
+
+		protected void load2DVector(int location, float x, float y) {
+			glUniform2f(location, x, y);
+		}
 
 	    protected void loadBoolean(int location, boolean value) {
 	        glUniform1f(location, value ? 1 : 0);

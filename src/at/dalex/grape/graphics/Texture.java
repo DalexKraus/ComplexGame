@@ -5,12 +5,15 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
+import static org.lwjgl.opengl.GL42.glBindImageTexture;
 
 /**
  * A more superior version of {@link Image}
+ *
+ * @author Dalex
  */
 public class Texture extends Image {
 
@@ -112,6 +115,22 @@ public class Texture extends Image {
         if (enableAniso) {
             glTexParameterf(glTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
         }
+    }
+
+    public void bindImageUnit(int texture_uniform, int index, int textureAccess, int level, int layer) {
+        boolean isLayered = false;
+        switch (glTarget)
+        {
+            case GL_TEXTURE_2D_ARRAY:
+            case GL_TEXTURE_CUBE_MAP:
+            case GL_TEXTURE_3D:
+                isLayered = true;
+                break;
+        }
+
+        glActiveTexture(GL_TEXTURE0 + index);
+        glBindImageTexture(index, textureId, level, isLayered, layer, textureAccess, pixelInternalFormat);
+        glUniform1i(texture_uniform, index);
     }
 
     private int getMaxMipMap(int width, int height) {

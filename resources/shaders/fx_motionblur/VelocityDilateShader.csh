@@ -1,7 +1,7 @@
 
 layout (local_size_x = 32, local_size_y = 32) in;
 
-uniform image2D sourceImage;
+uniform sampler2D sourceImage;
 writeonly uniform image2D destImage;
 
 shared vec2 cache[gl_WorkGroupSize.x];
@@ -13,7 +13,7 @@ uniform vec2 texture_size;
 void gaussian()
 {
     uint id = gl_LocalInvocationID.x;
-    uint fragmentation = gl_NumWorkGroups.xy;
+    uint fragmentation = gl_NumWorkGroups.y;
     uint current_fragment = gl_WorkGroupID.y;
 
     ivec2 texCoord = ivec2(id * fragmentation + current_fragment, gl_WorkGroupID.x);
@@ -22,7 +22,7 @@ void gaussian()
     texCoord = ivec2(texCoord[direction_selector], texCoord[abs(direction_selector - 1)]);
     float textureSize_earlyOut = texture_size[direction_selector] / fragmentation;
 
-    vec2 velocity = texture_size(sourceImage, texCoord / texture_size).rg;
+    vec2 velocity = texture(sourceImage, texCoord / texture_size).rg;
     cache[id] = velocity;
 
     barrier();
@@ -30,7 +30,7 @@ void gaussian()
 
     if (id > textureSize_earlyOut)
     {
-        imageStore(destImage, texCoord, vec4(0.0));
+        imageStore(destImage, texCoord, vec4(1.0));
         return;
     }
 
@@ -44,7 +44,7 @@ void gaussian()
 
     vec2 final = velocity   * gauss_increment.x;
     float increment_sum     = gauss_increment.x;
-    gauss_increment.xy     *= gauss.increment_sum.yz;
+    gauss_increment.xy     *= gauss_increment.yz;
 
     for (int i = 1; i < blur_amount; i++)
     {
