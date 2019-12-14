@@ -15,11 +15,20 @@ import org.lwjgl.opengl.GL11;
  */
 public class Image {
 
-	private int textureId;
-	private final int glTarget = GL11.GL_TEXTURE_2D;
+	protected int textureId;
+	protected int glTarget = GL11.GL_TEXTURE_2D;
 	private int width;
 	private int height;
-	
+
+	/**
+	 * Creates a new Image instance,
+	 * Contains the width and height, but the texture id must still be created.
+	 */
+	public Image(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+
 	/**
 	 * Creates a new Image instance. 
 	 * Contains the width, height and texture id of a OpenGL texture
