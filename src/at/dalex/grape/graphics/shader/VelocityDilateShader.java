@@ -30,11 +30,12 @@ public class VelocityDilateShader extends ShaderProgram {
         this.velTex1 = new Texture
         (
                 GL11.GL_TEXTURE_2D,
-                DisplayManager.windowWidth / 2, DisplayManager.windowHeight / 2,
+                1280, 720,
                 0, false, false,
                 GL_RG16F, GL_RG, GL_FLOAT,
                 GL_LINEAR, GL_LINEAR, GL_CLAMP
         );
+        velTex1.load(null);
 
         this.velTex2 = new Texture
         (
@@ -44,6 +45,7 @@ public class VelocityDilateShader extends ShaderProgram {
                 GL_RG16F, GL_RG, GL_FLOAT,
                 GL_LINEAR, GL_LINEAR,GL_CLAMP
         );
+        velTex2.load(null);
     }
 
     @Override
@@ -58,10 +60,9 @@ public class VelocityDilateShader extends ShaderProgram {
 
     @Override
     public void bindAttributes() {
-
     }
 
-    public void dilateVelocity(int velocityTextureId, int width, int height, Matrix4f projectionAndViewMatrix) {
+    public Texture dilateVelocity(int velocityTextureId, int width, int height) {
         UniformUtil.UniformLoader loader = getUniformLoader();
 
         start();
@@ -89,7 +90,8 @@ public class VelocityDilateShader extends ShaderProgram {
 
         glDispatchCompute(velTex1.getWidth(), fragmentation, 1);
         glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+        stop();
 
-        Graphics.drawImage(velTex2.getTextureId(), 0, 0, 1280, 720, projectionAndViewMatrix);
+        return velTex2;
     }
 }

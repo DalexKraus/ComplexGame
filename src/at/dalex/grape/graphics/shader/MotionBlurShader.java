@@ -1,7 +1,7 @@
 package at.dalex.grape.graphics.shader;
 
 import at.dalex.grape.GrapeEngine;
-import at.dalex.grape.graphics.FrameBufferObject;
+import at.dalex.grape.graphics.Texture;
 import at.dalex.grape.graphics.Timer;
 import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.toolbox.MemoryManager;
@@ -35,7 +35,7 @@ public class MotionBlurShader extends ShaderProgram {
     @Override
     public void bindAttributes() { }
 
-    public void drawMesh(TexturedModel model, FrameBufferObject velocityBuffer, Matrix4f projectionAndViewMatrix) {
+    public void drawMesh(TexturedModel model, Texture velocityTexture, Matrix4f projectionAndViewMatrix) {
         start();
         model.getBaseModel().getVao().bindVAO();
         glEnableVertexAttribArray(0);
@@ -44,7 +44,7 @@ public class MotionBlurShader extends ShaderProgram {
         getUniformLoader().loadMatrix(matrixLocation, projectionAndViewMatrix);
 
         Timer timer = GrapeEngine.getEngine().getDisplayManager().getTimer();
-        float velScale = (1f / timer.getDelta()) / 240f;
+        float velScale = (1f / timer.getDelta()) / 60;
         getUniformLoader().loadFloat(velScaleLocation, velScale);
 
         //Set texture samplers to corresponding texture locations
@@ -55,7 +55,7 @@ public class MotionBlurShader extends ShaderProgram {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, model.getTextureId());
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, velocityBuffer.getColorTextureID());
+        glBindTexture(GL_TEXTURE_2D, velocityTexture.getTextureId());
 
         glDrawElements(GL_TRIANGLES, model.getBaseModel().getVertexCount(), GL_UNSIGNED_INT, 0);
         glBindTexture(GL_TEXTURE_2D, 0);

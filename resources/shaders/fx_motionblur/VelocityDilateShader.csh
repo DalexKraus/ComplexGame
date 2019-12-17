@@ -1,5 +1,5 @@
 
-layout (local_size_x = 32, local_size_y = 32) in;
+layout (local_size_x = 512, local_size_y = 1) in;
 
 uniform sampler2D sourceImage;
 writeonly uniform image2D destImage;
@@ -30,7 +30,7 @@ void gaussian()
 
     if (id > textureSize_earlyOut)
     {
-        imageStore(destImage, texCoord, vec4(1.0));
+        imageStore(destImage, texCoord, vec4(0.0));
         return;
     }
 
@@ -58,7 +58,7 @@ void gaussian()
         increment_sum += (2.0 * gauss_increment.x);
         gauss_increment.xy *= gauss_increment.yz;
     }
-    
+
     final /= increment_sum;
     imageStore(destImage, texCoord, vec4(final, 0, 0));
 }

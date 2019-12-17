@@ -23,7 +23,8 @@ void main()
 
     //Normalize velocity
     velocity = normalize(velocity);
+
     velocity += 1.0;
     velocity /= 2.0;
-    oVelocity = vec4(velocity, 0f, 1f);
+    oVelocity = vec4(velocity, 1, 1);
 }

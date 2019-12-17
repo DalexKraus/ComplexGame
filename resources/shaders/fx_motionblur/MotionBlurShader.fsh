@@ -25,14 +25,13 @@ vec3 motion_blur()
     //Sample scene and velocity image
     vec3 final = texture(uTexInput, screenTexCoords).rgb;
     vec2 velocity = texture(uTexVelocity, screenTexCoords).rg;
-    if (length(velocity) != 0.0) {
+//    if (length(velocity) != 0.0) {
         velocity *= 2.0;
         velocity -= 1.0;
-    }
+//    }
 
     float speed = length(velocity / texelSize);
     int nSamples = clamp(int(speed), 1, MAX_SAMPLES);
-    nSamples = 8;
 
     float velocity_length = length(velocity);
     if (velocity_length < 0.0001)
@@ -41,7 +40,7 @@ vec3 motion_blur()
     float weight = 1.0 / velocity_length;
     for (int i = 1; i < nSamples; i++)
     {
-        vec2 offset = velocity * (float(i) / float(nSamples - 1.0) - 0.5) * 0.01;
+        vec2 offset = velocity * (float(i) * velocityScale / float(nSamples - 1.0) - 0.5) * 0.01;
         vec2 sampleTexCoord = screenTexCoords + offset;
         vec2 sampleVelocity = texture(uTexVelocity, sampleTexCoord).rg * velocityScale;
 
