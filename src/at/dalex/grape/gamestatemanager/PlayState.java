@@ -1,92 +1,138 @@
 package at.dalex.grape.gamestatemanager;
 
+import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
-import at.dalex.grape.graphics.Graphics;
-import at.dalex.grape.graphics.Image;
-import at.dalex.grape.graphics.shader.MotionBlurShader;
-import at.dalex.grape.graphics.shader.VelocityDilateShader;
-import at.dalex.grape.graphics.shader.VelocityShader;
+import at.dalex.grape.graphics.mesh.TexturedModel;
+import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
-import at.dalex.grape.map.chunk.ChunkWorld;
+import at.dalex.grape.resource.Assets;
+import com.complex.HUD;
 import com.complex.entity.Player;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
+
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
 
 public class PlayState extends GameState {
 
 	private Player player;
 	private ArrayList<Entity> entities = new ArrayList<>();
+	private HUD playerHud;
 
-	private ChunkWorld chunkWorld;
-	private ChunkWorldRenderer renderer;
+	private FrameBufferObject backgroundFBO;
+	private TexturedModel backgroundModel;
+	private HueShader hueShader;
 
-	private Matrix4f previousMatrix;
-	private FrameBufferObject velFBO;
-	private FrameBufferObject sceneFBO;
-	private VelocityShader velocityShader;
-	private VelocityDilateShader velocityDilateShader;
-	private MotionBlurShader motionBlurShader;
-	private Image playerImage;
-	private double angle = 0D;
+	private Image background;
+
+	float scrollPos = 0f;
+	private ParallaxPlane plane1;
+	private ParallaxPlane plane2;
+	private ParallaxPlane plane3;
+	private ParallaxPlane plane4;
+	private ParallaxPlane plane5;
 
 	@Override
 	public void init() {
-		player = new Player(512, 512);
+		this.backgroundFBO = new FrameBufferObject();
+		this.hueShader = new HueShader();
+		this.background = Assets.get("sky.background", Image.class);
+		this.backgroundModel = Graphics.getFrameBufferModel(backgroundFBO);
+
+		this.plane1 = new ParallaxPlane(DisplayManager.windowWidth, 4069, 0.75f);
+		this.plane2 = new ParallaxPlane(DisplayManager.windowWidth, 4069, 0.25f);
+		this.plane3 = new ParallaxPlane(DisplayManager.windowWidth, 4069, 0.1f);
+		this.plane4 = new ParallaxPlane(DisplayManager.windowWidth, 4069, 0.05f);
+		this.plane5 = new ParallaxPlane(DisplayManager.windowWidth, 4069, 0.015f);
+
+		Image stars = Assets.get("sky.stars", Image.class);
+		Image far1 = Assets.get("sky.farplanet.1", Image.class);
+		Image far2 = Assets.get("sky.farplanet.2", Image.class);
+		Image bigPlanet = Assets.get("sky.bigplanet", Image.class);
+		Image ringPlanet = Assets.get("sky.ringplanet", Image.class);
+
+		placeComponentsOnPlane(plane5, stars, 540, 290, 50); 		// Faaar away
+		placeComponentsOnPlane(plane4, far2, 24, 24, 20);  			// A little bit closer
+		placeComponentsOnPlane(plane3, far1, 32, 32, 30);  			// A little more closer
+		placeComponentsOnPlane(plane2, ringPlanet, 90, 215, 3);  	// Close
+		placeComponentsOnPlane(plane1, bigPlanet, 512, 512, 5);   	// What the fuck
+
+		plane1.bufferComponents();
+		plane2.bufferComponents();
+		plane3.bufferComponents();
+		plane4.bufferComponents();
+		plane5.bufferComponents();
+
+		this.player = new Player(512, 512);
 		entities.add(player);
 
-		this.chunkWorld = new ChunkWorld();
-		chunkWorld.generateChunkAt(0, 0);
-
-		BufferedImage atlas = ImageUtils.loadBufferedImage("textures/base.png");
-		Tileset tileset = new Tileset(atlas, 16);
-		this.renderer = new ChunkWorldRenderer(tileset, chunkWorld);
-
-		this.playerImage = ImageUtils.loadImage(new File("textures/entity/player/player.png"));
-		this.velFBO = new FrameBufferObject(1280, 720);
-		this.sceneFBO = new FrameBufferObject(1280, 720);
-		velocityShader = new VelocityShader();
-		velocityDilateShader = new VelocityDilateShader();
-		motionBlurShader = new MotionBlurShader();
+		this.playerHud = new HUD(player);
 	}
 
 	@Override
 	public void draw(Matrix4f projectionAndViewMatrix) {
-		int xOff = 0;
-		int yOff = 0;
-		int x = (int) Input.getMousePosition().x - 64;
-		int y = (int) Input.getMousePosition().y - 64;
+		int dW = DisplayManager.windowWidth;
+		int dH = DisplayManager.windowHeight;
 
-		sceneFBO.bindFrameBuffer();
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		Graphics.enableBlending(true);
-		Graphics.drawImage(playerImage, xOff + x, yOff + y, 128, 128, projectionAndViewMatrix);
-		sceneFBO.unbindFrameBuffer();
+		backgroundFBO.bindFrameBuffer();
+		{
+			glClear(GL_COLOR_BUFFER_BIT);
+			Graphics.enableBlending(true);
+			Graphics.drawImage(background, 0, 0, dW, dH, backgroundFBO.getProjectionMatrix());
+			plane5.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+			plane4.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+			plane3.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+			plane2.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+			plane1.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 
-		velFBO.bindFrameBuffer();
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		Matrix4f transform = Graphics.transformMatrix(projectionAndViewMatrix, xOff + x, yOff + y, 128, 128, 0f);
-		if (previousMatrix == null) previousMatrix = transform;
-		velocityShader.drawMesh(Graphics.getRectangleModel(playerImage.getTextureId()), transform, previousMatrix);
-		previousMatrix = transform;
-		velFBO.unbindFrameBuffer();
-
-		Matrix4f fboTransform = Graphics.transformMatrix(projectionAndViewMatrix, 0, 0, 1280, 720, 0f);
-		Texture dilatedVelocity = velocityDilateShader.dilateVelocity(velFBO.getColorTextureID(), 1280, 720);
-
-		if (Input.isButtonPressed(0)) {
-			motionBlurShader.drawMesh(Graphics.getRectangleModel(sceneFBO.getColorTextureID()), dilatedVelocity, fboTransform);
 		}
-		else Graphics.drawImage(dilatedVelocity, 0, 0, 1280, 720, projectionAndViewMatrix);
+		backgroundFBO.unbindFrameBuffer();
+
+
+		Matrix4f transformation = Graphics.transformMatrix(projectionAndViewMatrix, 0, 0, dW, dH, 0f);
+		hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
+
+		entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
+
+		Graphics.enableBlending(true);
+		hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
+
+		//Draw hud without view projection to remain static on screen
+		Matrix4f projectionMatrix = GrapeEngine.getEngine().getCamera().getProjectionMatrix();
+		playerHud.draw(projectionMatrix);
 	}
 
+	boolean r = false;
 	@Override
 	public void update(double delta) {
-		angle += 4D;
+		if (Input.isButtonPressed(0))
+			scrollPos  += delta * 1024;
+		else scrollPos += delta * 256;
+
+		entities.forEach(ent -> ent.update(delta));
+		playerHud.update(delta);
+
+		if (Input.isButtonPressed(1)) {
+			if (!r) {
+				player.applyDamage(5);
+				r = true;
+			}
+		} else r = false;
+	}
+
+	private void placeComponentsOnPlane(ParallaxPlane plane, Image compImage, int w, int h, int count) {
+		Random rand = new Random();
+		for (int i = 0; i < count; i++) {
+			int x = rand.nextInt(plane1.getPlaneWidth());
+			int y = rand.nextInt(plane1.getPlaneHeight() - 512) + 256;
+
+			plane.getComponents().add(new ParallaxPlane.PlaneComponent(x, y, w, h, compImage));
+		}
 	}
 }

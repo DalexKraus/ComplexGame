@@ -17,7 +17,7 @@ public class MouseClickListener extends GLFWMouseButtonCallback {
 
 		else if (action == GLFW.GLFW_RELEASE) {
 			if (Input.heldKeys.contains(button)) {
-				Input.heldKeys.remove(button);
+				Input.heldKeys.remove((Integer) button);
 			}
 		}
 	}

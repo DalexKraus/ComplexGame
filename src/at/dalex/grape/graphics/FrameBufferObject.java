@@ -20,6 +20,10 @@ public class FrameBufferObject {
 	/* Every framebuffer needs a different projection matrix, as the dimensions are not the same */
 	private Matrix4f projectionMatrix;
 
+	public FrameBufferObject() {
+		this(DisplayManager.windowWidth, DisplayManager.windowHeight);
+	}
+
 	public FrameBufferObject(int width, int height) {
 		this.width = width;
 		this.height = height;

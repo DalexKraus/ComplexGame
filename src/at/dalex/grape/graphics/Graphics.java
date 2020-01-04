@@ -172,6 +172,10 @@ public class Graphics {
 		return new TexturedModel(defaultRectangleModel, textureId);
 	}
 
+	public static TexturedModel getFrameBufferModel(FrameBufferObject fbo) {
+		return new TexturedModel(frameBufferModel, fbo.getColorTextureID());
+	}
+
 	public static Matrix4f transformMatrix(Matrix4f projectionAndViewMatrix, int x, int y, int width, int height, float rZ) {
 		float scaleX = width / 2f;
 		float scaleY = height / 2f;
