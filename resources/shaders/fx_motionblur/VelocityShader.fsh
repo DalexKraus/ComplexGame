@@ -15,14 +15,16 @@ void main()
     //pixels who are transparent, to exactly represent object's outline
     //in the velocity buffer.
     vec4 textureColor = texture(textureSampler, pass_textureCoordinates);
-    if (textureColor.a == 0)
-        discard;
+//    if (textureColor.a == 0)
+//        discard;
 
     vec2 velocity = vec2(posA.x - posB.x, posA.y - posB.y);
     float velocity_length = length(velocity);
 
+
     //Normalize velocity
     velocity = normalize(velocity);
+    velocity = clamp(velocity, 0, 1);
 
     velocity += 1.0;
     velocity /= 2.0;

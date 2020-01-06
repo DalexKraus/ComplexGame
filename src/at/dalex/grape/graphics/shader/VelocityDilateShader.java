@@ -66,7 +66,7 @@ public class VelocityDilateShader extends ShaderProgram {
         UniformUtil.UniformLoader loader = getUniformLoader();
 
         start();
-        int blur_amount = 150;
+        int blur_amount = 40;
         int fragmentation = 2;
 
         loader.loadInt(location_blurAmount, blur_amount);

@@ -21,7 +21,10 @@ public class Player extends Entity {
 
     private float playerRotation = 0.0f;
     private Image playerImage;
-    private final int PLAYER_WIDTH = 32, PLAYER_HEIGHT = 32;
+    public static final int PLAYER_WIDTH = 64, PLAYER_HEIGHT = 64;
+
+    /* Health */
+    private int health = 100;
 
     public Player(double x, double y) {
         super(x, y);
@@ -88,7 +91,26 @@ public class Player extends Entity {
         playerRotation = (float) Math.toDegrees(Math.atan2(dY, dX)) + 90f;
     }
 
+    public void applyDamage(int damage) {
+        health -= damage;
+        if (health <= 0) {
+            onDeath();
+        }
+    }
+
+    private void onDeath() {
+        System.out.println("Player ded uhh.");
+    }
+
     public Vector2f getVelocity() {
         return this.velocity;
+    }
+
+    public float getPlayerRotation() {
+        return playerRotation;
+    }
+
+    public int getHealth() {
+        return health;
     }
 }
