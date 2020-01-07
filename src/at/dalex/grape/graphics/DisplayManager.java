@@ -108,7 +108,7 @@ public class DisplayManager {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
 		//Create the window
-		windowHandle = glfwCreateWindow(windowWidth, windowHeight, windowTitle + " Snapshot", glfwGetPrimaryMonitor(), NULL);
+		windowHandle = glfwCreateWindow(windowWidth, windowHeight, windowTitle + " Snapshot", NULL, NULL);
 		if (windowHandle == NULL) {
 			throw new RuntimeException("Failed to create the GLFW window.");
 		}
