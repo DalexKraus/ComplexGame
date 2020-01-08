@@ -46,5 +46,5 @@ vec4 saturate(vec4 color, float saturation)
 
 void main() {
     vec4 srcColor = texture(textureSampler, pass_textureCoordinates);
-    fragColor = saturate(hueShift(vec3(0.96, 0.445, 0.5), hueValue), saturationValue) * average(srcColor);
+    fragColor = saturate(srcColor, hueValue);
 }

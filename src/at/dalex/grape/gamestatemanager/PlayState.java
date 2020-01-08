@@ -8,8 +8,10 @@ import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
 import at.dalex.grape.resource.Assets;
 import com.complex.HUD;
-import com.complex.entity.Bullet;
 import com.complex.entity.Player;
+import com.complex.entity.bullet.Bullet;
+import com.complex.entity.bullet.LaserBullet;
+import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -22,9 +24,9 @@ public class PlayState extends GameState {
 
 	private Player player;
 	private ArrayList<Entity> entities = new ArrayList<>();
-	private ArrayList<Bullet> bullets = new ArrayList<>();
 	private HUD playerHud;
 
+	private BulletManager bulletManager = new BulletManager();
 	private FrameBufferObject backgroundFBO;
 	private TexturedModel backgroundModel;
 	private HueShader hueShader;
@@ -91,20 +93,17 @@ public class PlayState extends GameState {
 			plane3.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 			plane2.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 			plane1.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
-
-			entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
-			bullets.forEach(bullet -> bullet.draw(projectionAndViewMatrix));
-
 		}
 		backgroundFBO.unbindFrameBuffer();
 
+		entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
+		bulletManager.getBullets().forEach(bullet -> bullet.draw(projectionAndViewMatrix));
 
 		Matrix4f transformation = Graphics.transformMatrix(projectionAndViewMatrix, 0, 0, dW, dH, 0f);
-		hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
-
+		//hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
 
 		Graphics.enableBlending(true);
-//		hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
+		//hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
 
 		//Draw hud without view projection to remain static on screen
 		Matrix4f projectionMatrix = GrapeEngine.getEngine().getCamera().getProjectionMatrix();
@@ -115,25 +114,25 @@ public class PlayState extends GameState {
 	boolean b = false;
 	@Override
 	public void update(double delta) {
-		if (Input.isButtonPressed(0))
-			scrollPos  += delta * 1024;
-		else scrollPos += delta * 256;
+		//if (Input.isButtonPressed(0))
+		//	scrollPos  += delta * 1024;
+		//else scrollPos += delta * 256;
 
 		entities.forEach(ent -> ent.update(delta));
-		bullets.forEach(bullet -> bullet.update(delta));
+
+		bulletManager.getBullets().forEach(bullet -> bullet.update(delta));
+		bulletManager.validateBullets();
+
 		playerHud.update(delta);
 
 		//shoot
 		if (Input.isButtonPressed(0)) {
-			if (!b) {
-				//Spawn bullet
-				int xPos = (int) (player.getX() + player.getBounds().getWidth()  / 2);
-				int yPos = (int) (player.getY() + player.getBounds().getHeight() / 2);
-				Bullet bullet = new Bullet(xPos, yPos, player.getPlayerRotation(), 2048f);
-				bullets.add(bullet);
-				b = true;
-			}
-		} else b = false;
+			//Spawn bullet
+			int xPos = (int) (player.getX() + 4);
+			int yPos = (int) (player.getY() + 6);
+			Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 4069);
+			bulletManager.spawnBullet(bullet);
+		}
 
 		if (Input.isButtonPressed(1)) {
 			if (!r) {

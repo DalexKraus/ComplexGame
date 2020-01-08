@@ -18,7 +18,7 @@ public class ComplexGame extends GrapeEngine {
 
     @Override
     public void onEnable() {
-        GameState playState = new PlayState();
+        GameState playState = new IntroState();
         getGameStateManager().addGameState(playState);
         getGameStateManager().setState(playState.getId());
     }
