@@ -70,6 +70,20 @@ public class Camera {
 	}
 
 	/**
+	 * Translates the camera using a vector, represented in 3 float values.
+	 * For further information see {@link Camera#translate(Vector3f)}
+	 *
+	 * @param tx x-translation
+	 * @param ty y-translation
+	 * @param tz z-translation
+	 */
+	public void translate(float tx, float ty, int tz) {
+		this.position.x += tx;
+		this.position.y += ty;
+		this.position.z += tz;
+	}
+
+	/**
 	 * @return The current position of the camera.
 	 */
 	public Vector3f getPosition() {
