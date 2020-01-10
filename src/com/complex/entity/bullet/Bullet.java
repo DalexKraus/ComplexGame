@@ -13,7 +13,7 @@ public class Bullet extends Entity {
 
     private Image bulletImage;
 
-    private float angle;
+    private double angleRad;
     private float speed;
 
     //Bullet spawn time in current milliseconds
@@ -21,27 +21,34 @@ public class Bullet extends Entity {
 
     public Bullet(double x, double y, float angle, float speed) {
         super(x, y);
-        this.angle = angle - 90f;
+        this.angleRad = Math.toRadians(angle - 90f);
         this.speed = speed;
         this.bulletImage = ImageUtils.loadImage(new File("textures/bullet.png"));
         this.spawnTime = System.currentTimeMillis();
     }
 
     @Override
-    public void update(double delta) {
-        double bulletAngle = Math.toRadians(angle);
-        float xTranslation = (float) (speed * delta * Math.cos(bulletAngle));
-        float yTranslation = (float) (speed * delta * Math.sin(bulletAngle));
-        setX(getX() + xTranslation);
-        setY(getY() + yTranslation);
+    public void draw(Matrix4f projectionAndViewMatrix) {
+        Graphics.enableBlending(true);
+
+        double halfPlayerW = Player.PLAYER_WIDTH / 2D;
+        double halfPlayerH = Player.PLAYER_HEIGHT / 2D;
+        double xPos = Math.cos(angleRad) * halfPlayerW;
+        double yPos = Math.sin(angleRad) * halfPlayerH - 10;
+
+        Graphics.drawRotatedImage(bulletImage,
+                (int) (getX() + xPos),
+                (int) (getY() + yPos),
+                bulletImage.getWidth(), bulletImage.getHeight(), (float) Math.toDegrees(angleRad) + 90,
+                projectionAndViewMatrix);
     }
 
     @Override
-    public void draw(Matrix4f projectionAndViewMatrix) {
-        int xPos = (int) (getX() + Player.PLAYER_HEIGHT / 2);
-        int yPos = (int) (getY());
-        Graphics.enableBlending(true);
-        Graphics.drawRotatedImage(bulletImage, xPos, yPos, bulletImage.getWidth() * 2, bulletImage.getHeight() * 2, angle + 90f, projectionAndViewMatrix);
+    public void update(double delta) {
+        float xTranslation = (float) (speed * delta * Math.cos(angleRad));
+        float yTranslation = (float) (speed * delta * Math.sin(angleRad));
+        setX(getX() + xTranslation);
+        setY(getY() + yTranslation);
     }
 
     public long getLifetime() {

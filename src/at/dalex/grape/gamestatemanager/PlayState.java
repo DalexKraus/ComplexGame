@@ -3,6 +3,8 @@ package at.dalex.grape.gamestatemanager;
 import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
+import at.dalex.grape.graphics.Graphics;
+import at.dalex.grape.graphics.Image;
 import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
@@ -13,18 +15,23 @@ import com.complex.entity.bullet.Bullet;
 import com.complex.entity.bullet.LaserBullet;
 import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.lwjgl.system.windows.DISPLAY_DEVICE;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.*;
 
 public class PlayState extends GameState {
 
 	private Player player;
 	private ArrayList<Entity> entities = new ArrayList<>();
 	private HUD playerHud;
+
+	private Camera camera;
+	private Matrix4f projectionMatrix;
 
 	private BulletManager bulletManager = new BulletManager();
 	private FrameBufferObject backgroundFBO;
@@ -33,7 +40,7 @@ public class PlayState extends GameState {
 
 	private Image background;
 
-	float scrollPos = 0f;
+	private float scrollPos = 0f;
 	private ParallaxPlane plane1;
 	private ParallaxPlane plane2;
 	private ParallaxPlane plane3;
@@ -71,10 +78,14 @@ public class PlayState extends GameState {
 		plane4.bufferComponents();
 		plane5.bufferComponents();
 
-		this.player = new Player(512, 512);
+		this.player = new Player(0, 0);
 		entities.add(player);
 
 		this.playerHud = new HUD(player);
+
+		//Extract projection matrix
+		this.camera = GrapeEngine.getEngine().getCamera();
+		this.projectionMatrix = camera.getProjectionMatrix();
 	}
 
 	@Override
@@ -85,7 +96,7 @@ public class PlayState extends GameState {
 		Graphics.enableBlending(true);
 		backgroundFBO.bindFrameBuffer();
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			Graphics.enableBlending(true);
 			Graphics.drawImage(background, 0, 0, dW, dH, backgroundFBO.getProjectionMatrix());
 			plane5.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
@@ -93,53 +104,63 @@ public class PlayState extends GameState {
 			plane3.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 			plane2.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 			plane1.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+
+			entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
+			bulletManager.getBullets().forEach(bullet -> bullet.draw(projectionAndViewMatrix));
 		}
 		backgroundFBO.unbindFrameBuffer();
 
-		entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
-		bulletManager.getBullets().forEach(bullet -> bullet.draw(projectionAndViewMatrix));
-
-		Matrix4f transformation = Graphics.transformMatrix(projectionAndViewMatrix, 0, 0, dW, dH, 0f);
-		//hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
-
-		Graphics.enableBlending(true);
-		//hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
+		Matrix4f transformation = Graphics.transformMatrix(projectionMatrix, 0, 0, dW, dH, 0f);
+		hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
+//		hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
 
 		//Draw hud without view projection to remain static on screen
-		Matrix4f projectionMatrix = GrapeEngine.getEngine().getCamera().getProjectionMatrix();
 		playerHud.draw(projectionMatrix);
 	}
 
-	boolean r = false;
-	boolean b = false;
+	private boolean right = false;
 	@Override
 	public void update(double delta) {
-		//if (Input.isButtonPressed(0))
-		//	scrollPos  += delta * 1024;
-		//else scrollPos += delta * 256;
-
+		updateCamera(delta);
+		scrollPos = -camera.getPosition().y;
 		entities.forEach(ent -> ent.update(delta));
-
 		bulletManager.getBullets().forEach(bullet -> bullet.update(delta));
 		bulletManager.validateBullets();
-
 		playerHud.update(delta);
 
-		//shoot
-		if (Input.isButtonPressed(0)) {
-			//Spawn bullet
-			int xPos = (int) (player.getX() + 4);
-			int yPos = (int) (player.getY() + 6);
-			Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 4069);
-			bulletManager.spawnBullet(bullet);
-		}
-
 		if (Input.isButtonPressed(1)) {
-			if (!r) {
+			if (!right) {
+				//Spawn bullet
+				int xPos = (int) (player.getX());
+				int yPos = (int) (player.getY());
+				Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 4069);
+				bulletManager.spawnBullet(bullet);
 				player.applyDamage(5);
-				r = true;
+				right = true;
 			}
-		} else r = false;
+		} else right = false;
+	}
+
+	/**
+	 * Updates the position of the camera in space, always trying to keep the player in focus.
+	 */
+	private void updateCamera(double delta) {
+		float dwH = DisplayManager.windowHeight / 2f;
+		float dwW = DisplayManager.windowWidth  / 2f;
+
+		float px = (float) (player.getX() - dwW);
+		float py = (float) (player.getY() - dwH);
+		Vector3f playerPosition = new Vector3f(px, py, 0f);
+
+		//Calculate the vector from the camera pointing towards the player
+		Vector3f cameraOffset = playerPosition.sub(camera.getPosition());
+		//Move camera to target in one second
+		cameraOffset.mul((float) delta);
+		//Scale that time to two seconds
+		cameraOffset.mul(2f);
+
+		//Finally, translate the camera in that direction
+		camera.translate(cameraOffset);
 	}
 
 	private void placeComponentsOnPlane(ParallaxPlane plane, Image compImage, int w, int h, int count) {

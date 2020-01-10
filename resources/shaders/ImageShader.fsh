@@ -19,5 +19,5 @@ void main() {
 	//vec4 tColor = texture2D(textureSampler, uv);
 	
 	fragColor = texture(textureSampler, pass_textureCoordinates);
-	fragColor = vec4(0.0, gl_FragCoord.y / 1280, gl_FragCoord.x / 1280, 1.0);
+//	fragColor = vec4(0, 1, 1, 1);
 }

@@ -1,5 +1,6 @@
 package com.complex.entity;
 
+import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
 import at.dalex.grape.input.Input;
@@ -16,7 +17,7 @@ public class Player extends Entity {
     private Vector2f acceleration = new Vector2f();
     private Vector2f velocity = new Vector2f();
     private final float VELOCITY_FALLOFF = 0.9995f;
-    private final float PLAYER_SPEED_CAP = 256;
+    private final float PLAYER_SPEED_CAP = 720;
     private final float PLAYER_ACCELERATION = 1024;
 
     private float playerRotation = 0.0f;
@@ -34,7 +35,7 @@ public class Player extends Entity {
     @Override
     public void draw(Matrix4f projectionAndViewMatrix) {
         Graphics.enableBlending(true);
-        Graphics.drawRotatedImage(playerImage, (int) getX(), (int) getY(),
+        Graphics.drawRotatedImage(playerImage, (int) getX() - PLAYER_WIDTH / 2, (int) getY() - PLAYER_HEIGHT / 2,
                 PLAYER_WIDTH, PLAYER_HEIGHT, playerRotation, projectionAndViewMatrix);
 
         Graphics.enableBlending(false);
@@ -84,8 +85,9 @@ public class Player extends Entity {
             acceleration.set(0, 0);
 
         //Update player rotation
-        float mouseX = Input.getMousePosition().x;
-        float mouseY = Input.getMousePosition().y;
+        Camera camera = GrapeEngine.getEngine().getCamera();
+        float mouseX = Input.getMousePosition().x + camera.getPosition().x;
+        float mouseY = Input.getMousePosition().y + camera.getPosition().y;
         double dX = mouseX - getX();
         double dY = mouseY - getY();
         playerRotation = (float) Math.toDegrees(Math.atan2(dY, dX)) + 90f;

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class BulletManager {
 
-    // 10 sek as max. lifetime
-    private final long MAX_LIFETIME = 10 * 1000;
+    // 5 sek as max. lifetime
+    private final long MAX_LIFETIME = 5 * 1000;
     private ArrayList<Bullet> bullets = new ArrayList<>();
 
     public void spawnBullet(Bullet bulletInstance) {
