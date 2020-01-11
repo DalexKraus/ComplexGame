@@ -22,6 +22,7 @@ import org.joml.Vector3f;
 public class Camera {
 
 	private Vector3f position;
+	private float zRotation;
 	private Matrix4f projectionMatrix;
 
 	/**
@@ -90,6 +91,14 @@ public class Camera {
 		return this.position;
 	}
 
+	public void rotate(float dR) {
+		this.zRotation += dR;
+	}
+
+	public void setRotation(float r) {
+		this.zRotation = r;
+	}
+
 	/**
 	 * This method creates a view matrix using the camera's position
 	 * and combines (multiplies) it with the projection matrix.
@@ -98,6 +107,13 @@ public class Camera {
 	 */
 	public Matrix4f getProjectionAndViewMatrix() {
 		Matrix4f transformed = new Matrix4f(projectionMatrix);
+		float rot_translationX = 0.5f * DisplayManager.windowWidth  / 2;
+		float rot_translationY = 0.5f * DisplayManager.windowHeight / 2;
+
+		transformed.translate(rot_translationX, rot_translationY, 0);
+		transformed.rotateZ(zRotation);
+		transformed.translate(-rot_translationX, -rot_translationY, 0);
+
 		transformed.translate(position.x * -0.5f, position.y * -0.5f, position.z * -0.5f);
 		return transformed;
 	}
