@@ -1,5 +1,6 @@
 package at.dalex.grape.graphics;
 
+import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -22,6 +23,7 @@ import org.joml.Vector3f;
 public class Camera {
 
 	private Vector3f position;
+	private float zRotation;
 	private Matrix4f projectionMatrix;
 
 	/**
@@ -91,6 +93,29 @@ public class Camera {
 	}
 
 	/**
+	 * Offsets the camera's rotation around the z-axis.
+	 * @param dR The delta rotation in radians
+	 */
+	public void rotate(float dR) {
+		this.zRotation += dR;
+	}
+
+	/**
+	 * Sets the z-rotation of the camera
+	 * @param r The rotation angle in radians
+	 */
+	public void setRotation(float r) {
+		this.zRotation = r;
+	}
+
+	/**
+	 * @return The z-rotation of the camera
+	 */
+	public float getRotation() {
+		return this.zRotation;
+	}
+
+	/**
 	 * This method creates a view matrix using the camera's position
 	 * and combines (multiplies) it with the projection matrix.
 	 *
@@ -98,6 +123,11 @@ public class Camera {
 	 */
 	public Matrix4f getProjectionAndViewMatrix() {
 		Matrix4f transformed = new Matrix4f(projectionMatrix);
+		float rot_translationX = 0.5f * DisplayManager.windowWidth  / 2;
+		float rot_translationY = 0.5f * DisplayManager.windowHeight / 2;
+
+		Toolbox.rotateProjectionMatrix(transformed, zRotation, rot_translationX, rot_translationY);
+
 		transformed.translate(position.x * -0.5f, position.y * -0.5f, position.z * -0.5f);
 		return transformed;
 	}

@@ -1,5 +1,6 @@
 package at.dalex.grape.graphics;
 
+import at.dalex.grape.toolbox.Toolbox;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -76,6 +77,10 @@ public class FrameBufferObject {
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 //		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		GL11.glViewport(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight);
+	}
+
+	public void updateProjectionRotation(float rotRadians, float rX, float rY) {
+		Toolbox.rotateProjectionMatrix(projectionMatrix, rotRadians, rX, rY);
 	}
 
 	public Matrix4f getProjectionMatrix() {
