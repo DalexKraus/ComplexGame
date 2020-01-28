@@ -9,6 +9,7 @@ import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
 import at.dalex.grape.resource.Assets;
+import at.dalex.grape.toolbox.Toolbox;
 import com.complex.HUD;
 import com.complex.entity.Player;
 import com.complex.entity.bullet.Bullet;
@@ -19,6 +20,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.windows.DISPLAY_DEVICE;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -46,6 +48,8 @@ public class PlayState extends GameState {
 	private ParallaxPlane plane3;
 	private ParallaxPlane plane4;
 	private ParallaxPlane plane5;
+
+	private float angle;
 
 	@Override
 	public void init() {
@@ -128,6 +132,8 @@ public class PlayState extends GameState {
 		bulletManager.validateBullets();
 		playerHud.update(delta);
 
+		angle = (float) Math.toRadians(Input.mousePosition.y);
+
 		if (Input.isButtonPressed(1)) {
 			if (!right) {
 				//Spawn bullet
@@ -148,6 +154,7 @@ public class PlayState extends GameState {
 		float dwH = DisplayManager.windowHeight / 2f;
 		float dwW = DisplayManager.windowWidth  / 2f;
 
+		/* Keep the camera relative to the player */
 		float px = (float) (player.getX() - dwW);
 		float py = (float) (player.getY() - dwH);
 		Vector3f playerPosition = new Vector3f(px, py, 0f);
@@ -161,6 +168,13 @@ public class PlayState extends GameState {
 
 		//Finally, translate the camera in that direction
 		camera.translate(cameraOffset);
+
+		/* Keep the camera's rotation relative to the player */
+		float prevRot = angle;
+		camera.setRotation(angle);
+
+//		Toolbox.rotateProjectionMatrix(backgroundFBO.getProjectionMatrix(), -prevRot, dwW, dwH);
+		Toolbox.rotateProjectionMatrix(backgroundFBO.getProjectionMatrix(), angle, dwW, dwH);
 	}
 
 	private void placeComponentsOnPlane(ParallaxPlane plane, Image compImage, int w, int h, int count) {
