@@ -19,7 +19,7 @@ public class ImageShader extends ShaderProgram {
 	private int position_atlas_rows;
 	
 	public ImageShader() {
-		super("/shaders/ImageShader.vsh", "/shaders/ImageShader.fsh");
+		super("shaders/image/ImageShader.vsh", "shaders/image/ImageShader.fsh");
 	}
 	
 	@Override

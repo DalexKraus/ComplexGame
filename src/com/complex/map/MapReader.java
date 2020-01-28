@@ -33,7 +33,7 @@ public class MapReader {
             int[][] mapTiles = new int[width][height];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    mapTiles[i][j] = Integer.parseInt(values[i * width + j]);
+                    mapTiles[i][j] = Integer.parseInt(values[i + j].trim());
                 }
             }
         }

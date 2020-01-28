@@ -17,7 +17,7 @@ public class HueShader extends ShaderProgram {
     private int position_saturationValue;
 
     public HueShader() {
-        super("shaders/HueShader.vsh", "shaders/HueShader.fsh");
+        super("shaders/image/HueShader.vsh", "shaders/image/HueShader.fsh");
     }
 
     @Override
