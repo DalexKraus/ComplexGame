@@ -21,9 +21,7 @@ public class SolidColorShader extends ShaderProgram {
 	private int positionHandle;
 	private int matrixHandle;
 
-	public SolidColorShader() {
-		super("shaders/SolidColorShader.vsh", "shaders/SolidColorShader.fsh");
-	}
+	public SolidColorShader() { super("shaders/geometry/SolidColorShader.vsh", "shaders/geometry/SolidColorShader.fsh"); }
 
 	@Override
 	public void getAllUniformLocations() {

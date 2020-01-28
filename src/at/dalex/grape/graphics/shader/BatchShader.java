@@ -7,7 +7,7 @@ public class BatchShader extends ShaderProgram {
     public int projectionMatrixLocation;
 
     public BatchShader() {
-        super("/shaders/BatchShader.vsh", "/shaders/BatchShader.fsh");
+        super("shaders/batch/BatchShader.vsh", "shaders/batch/BatchShader.fsh");
     }
 
     @Override
