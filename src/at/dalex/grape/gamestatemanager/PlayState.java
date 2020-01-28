@@ -10,15 +10,15 @@ import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
 import at.dalex.grape.resource.Assets;
 import com.complex.HUD;
+import com.complex.entity.Enemy;
 import com.complex.entity.Player;
 import com.complex.entity.bullet.Bullet;
 import com.complex.entity.bullet.LaserBullet;
 import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.system.windows.DISPLAY_DEVICE;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -27,6 +27,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class PlayState extends GameState {
 
 	private Player player;
+	private Enemy enemy;
 	private ArrayList<Entity> entities = new ArrayList<>();
 	private HUD playerHud;
 
@@ -46,6 +47,8 @@ public class PlayState extends GameState {
 	private ParallaxPlane plane3;
 	private ParallaxPlane plane4;
 	private ParallaxPlane plane5;
+
+	private float angle;
 
 	@Override
 	public void init() {
@@ -78,8 +81,17 @@ public class PlayState extends GameState {
 		plane4.bufferComponents();
 		plane5.bufferComponents();
 
-		this.player = new Player(0, 0);
-		entities.add(player);
+        this.player = new Player(0, 0);
+        entities.add(player);
+
+        Image enemyImage = ImageUtils.loadImage(new File("textures/entity/player/player.png"));
+        this.enemy = new Enemy(enemyImage, 0, 0) {
+            @Override
+            public void update(double delta) {
+                super.update(delta);
+            }
+        };
+        entities.add(enemy);
 
 		this.playerHud = new HUD(player);
 
@@ -128,6 +140,8 @@ public class PlayState extends GameState {
 		bulletManager.validateBullets();
 		playerHud.update(delta);
 
+		angle = (float) Math.toRadians(Input.mousePosition.y);
+
 		if (Input.isButtonPressed(1)) {
 			if (!right) {
 				//Spawn bullet
@@ -148,6 +162,7 @@ public class PlayState extends GameState {
 		float dwH = DisplayManager.windowHeight / 2f;
 		float dwW = DisplayManager.windowWidth  / 2f;
 
+		/* Keep the camera relative to the player */
 		float px = (float) (player.getX() - dwW);
 		float py = (float) (player.getY() - dwH);
 		Vector3f playerPosition = new Vector3f(px, py, 0f);
@@ -161,6 +176,9 @@ public class PlayState extends GameState {
 
 		//Finally, translate the camera in that direction
 		camera.translate(cameraOffset);
+
+		/* Keep the camera's rotation relative to the player */
+//		camera.setRotation(angle);
 	}
 
 	private void placeComponentsOnPlane(ParallaxPlane plane, Image compImage, int w, int h, int count) {
@@ -171,5 +189,9 @@ public class PlayState extends GameState {
 
 			plane.getComponents().add(new ParallaxPlane.PlaneComponent(x, y, w, h, compImage));
 		}
+	}
+
+	public Player getPlayer() {
+		return this.player;
 	}
 }
