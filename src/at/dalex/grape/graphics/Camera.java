@@ -44,6 +44,18 @@ public class Camera {
 	}
 
 	/**
+	 * Sets the position of the camera in the world.
+	 * @param x x-coordinate of the camera
+	 * @param y y-coordinate of the camera
+	 * @param z z-coordiante of the camera
+	 */
+	public void setPosition(float x, float y, float z) {
+		this.position.x = x;
+		this.position.y = y;
+		this.position.z = z;
+	}
+
+	/**
 	 * Translates the camera using a given vector.
 	 *
 	 * The difference to {@link Camera#setPosition(Vector3f)}
@@ -55,6 +67,20 @@ public class Camera {
 	 */
 	public void translate(Vector3f position) {
 		this.position.add(position);
+	}
+
+	/**
+	 * Translates the camera using a vector, represented in 3 float values.
+	 * For further information see {@link Camera#translate(Vector3f)}
+	 *
+	 * @param tx x-translation
+	 * @param ty y-translation
+	 * @param tz z-translation
+	 */
+	public void translate(float tx, float ty, int tz) {
+		this.position.x += tx;
+		this.position.y += ty;
+		this.position.z += tz;
 	}
 
 	/**
@@ -72,9 +98,7 @@ public class Camera {
 	 */
 	public Matrix4f getProjectionAndViewMatrix() {
 		Matrix4f transformed = new Matrix4f(projectionMatrix);
-		Matrix4f transformationMatrix = new Matrix4f();
-		transformationMatrix.translate(position);
-		transformed.mul(transformationMatrix);
+		transformed.translate(position.x * -0.5f, position.y * -0.5f, position.z * -0.5f);
 		return transformed;
 	}
 

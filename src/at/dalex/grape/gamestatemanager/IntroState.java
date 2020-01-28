@@ -35,13 +35,16 @@ public class IntroState extends GameState {
 		int x = (DisplayManager.windowWidth / 2) - (engineLogo.getWidth() / 2);
 		int y = (DisplayManager.windowHeight / 2) - (engineLogo.getHeight() / 2);
 		Graphics.drawImage(engineLogo, x, y, engineLogo.getWidth(), engineLogo.getHeight(), projectionAndViewMatrix);
-		Graphics.fillRectangle(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight, new Color(0, 0, 0, (int) alpha), projectionAndViewMatrix);
+
+		int a = (int) alpha;
+		a = a > 255 ? 255 : a;
+		a = a < 0 ? 0 : a;
+		Graphics.fillRectangle(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight, new Color(0, 0, 0, a), projectionAndViewMatrix);
 		Graphics.enableBlending(false);
 	}
 
 	@Override
 	public void update(double delta) {
-
 		if (intro_sleep > 0) {
 			intro_sleep--;
 		}

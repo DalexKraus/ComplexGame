@@ -1,5 +1,10 @@
 package at.dalex.grape.entity;
 
+import at.dalex.grape.GrapeEngine;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import java.awt.Rectangle;
 import java.util.UUID;
 
@@ -36,7 +41,15 @@ public abstract class Entity implements ITickable {
 	public void setY(double y) {
 		this.y = y;
 	}
-	
+
+	public Vector4f getScreenSpacePosition() {
+		Vector4f worldPos = new Vector4f((float) x, (float) y, 0f, 1f);
+		//Multiply with the projection and view matrix to get the position on screen
+		Matrix4f projectionAndViewMatrix = GrapeEngine.getEngine().getCamera().getProjectionAndViewMatrix();
+		worldPos.mul(projectionAndViewMatrix);
+		return worldPos;
+	}
+
 	public Rectangle getBounds() {
 		return this.bounds;
 	}
