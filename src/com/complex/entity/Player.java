@@ -43,7 +43,7 @@ public class Player extends Entity {
 
     @Override
     public void update(double delta) {
-        handleInput();
+        handleInput(delta);
 
         //Apply acceleration
         if (velocity.length() < PLAYER_SPEED_CAP) {
@@ -62,7 +62,7 @@ public class Player extends Entity {
         velocity.mul(velocityFalloffFactor);
     }
 
-    private void handleInput() {
+    private void handleInput(double delta) {
         boolean movementKeyDown = false;
         if (Input.isKeyDown(GLFW_KEY_W)) {
             acceleration.y = -PLAYER_ACCELERATION;
@@ -73,24 +73,24 @@ public class Player extends Entity {
             movementKeyDown = true;
         }
         if (Input.isKeyDown(GLFW_KEY_A)) {
-            acceleration.x = -PLAYER_ACCELERATION;
-            movementKeyDown = true;
+            playerRotation += 360 * delta;
         }
         if (Input.isKeyDown(GLFW_KEY_D)) {
-            acceleration.x = PLAYER_ACCELERATION;
-            movementKeyDown = true;
+            playerRotation -= 360 * delta;
         }
 
         if (!movementKeyDown)
             acceleration.set(0, 0);
 
         //Update player rotation
-        Camera camera = GrapeEngine.getEngine().getCamera();
-        float mouseX = Input.getMousePosition().x + camera.getPosition().x;
-        float mouseY = Input.getMousePosition().y + camera.getPosition().y;
-        double dX = mouseX - getX();
-        double dY = mouseY - getY();
-        playerRotation = (float) Math.toDegrees(Math.atan2(dY, dX)) + 90f;
+//        Camera camera = GrapeEngine.getEngine().getCamera();
+//        float mouseX = Input.getMousePosition().x + camera.getPosition().x;
+//        float mouseY = Input.getMousePosition().y + camera.getPosition().y;
+//        double dX = mouseX - getX();
+//        double dY = mouseY - getY();
+
+
+//        playerRotation = (float) Math.toDegrees(Math.atan2(dY, dX)) + 90f;
     }
 
     public void applyDamage(int damage) {
