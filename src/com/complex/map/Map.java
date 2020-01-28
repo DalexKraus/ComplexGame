@@ -1,6 +1,7 @@
 package com.complex.map;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Map {
     ArrayList<Layer> layers = new ArrayList<>();
@@ -9,7 +10,7 @@ public class Map {
         layers.add(layer);
     }
 
-    public ArrayList<Layer> getLayers() {
-        return layers;
+    public Iterator getLayers() {
+        return layers.iterator();
     }
 }
