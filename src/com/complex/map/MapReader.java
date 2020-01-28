@@ -24,16 +24,17 @@ public class MapReader {
                 layers.add(child);
             }
         }
-        String[] values = null;
+
         for (Element child : layers) {
             width = Integer.parseInt(child.getAttributeValue("width"));
             height = Integer.parseInt(child.getAttributeValue("height"));
             String content = child.getValue().trim();
+            String[] values = null;
             values = content.split(",");
             int[][] mapTiles = new int[width][height];
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    mapTiles[i][j] = Integer.parseInt(values[i + j].trim());
+                    mapTiles[i][j] = Integer.parseInt(values[i * width + j].trim());
                 }
             }
         }
