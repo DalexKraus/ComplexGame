@@ -1,16 +1,15 @@
 package com.complex;
 
 import at.dalex.grape.GrapeEngine;
-import at.dalex.grape.gamestatemanager.GameState;
-import at.dalex.grape.gamestatemanager.IntroState;
 import at.dalex.grape.gamestatemanager.PlayState;
-import com.complex.entity.Player;
 
 import java.util.UUID;
 
 public class ComplexGame extends GrapeEngine {
 
+    private static ComplexGame instance;
     private UUID gameState;
+    private PlayState playState;
 
     public ComplexGame(String gameLocation) {
         super(gameLocation);
@@ -18,7 +17,8 @@ public class ComplexGame extends GrapeEngine {
 
     @Override
     public void onEnable() {
-        GameState playState = new PlayState();
+        instance = this;
+        this.playState = new PlayState();
         getGameStateManager().addGameState(playState);
         getGameStateManager().setState(playState.getId());
     }
@@ -26,5 +26,13 @@ public class ComplexGame extends GrapeEngine {
     @Override
     public void onDisable() {
 
+    }
+
+    public PlayState getPlayState() {
+        return playState;
+    }
+
+    public static ComplexGame getInstance() {
+        return instance;
     }
 }
