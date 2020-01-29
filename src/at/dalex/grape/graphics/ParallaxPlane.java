@@ -2,7 +2,6 @@ package at.dalex.grape.graphics;
 
 import org.joml.Matrix4f;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -17,6 +16,7 @@ public class ParallaxPlane {
     private int planeHeight;
 
     private float scrollFactor;
+    private float rotationRad;
 
     public ParallaxPlane(int planeWidth, int planeHeight, float scrollFactor) {
         this.planeWidth = planeWidth;
@@ -46,7 +46,7 @@ public class ParallaxPlane {
             int count = (int) (planeYPos / planeHeight);
             float offset = planeYPos - (count * planeHeight);
             int planeY = (int) (offset + i * planeHeight);
-            Graphics.drawFrameBufferObject(planeFBO, 0, (int) planeY, planeWidth, planeHeight, projectionMatrix);
+            Graphics.drawFrameBufferObject(planeFBO, 0, planeY, planeWidth, planeHeight, projectionMatrix);
         }
     }
 

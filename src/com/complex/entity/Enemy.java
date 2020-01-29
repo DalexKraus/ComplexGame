@@ -10,13 +10,11 @@ import org.joml.Vector2f;
 public abstract class Enemy extends Entity {
 
     private final double ACTIVATION_DISTANCE = 512;
-    private final Vector2f VEC_RIGHT = new Vector2f(1, 0);
 
     private AIState currentState = AIState.INACTIVE;
     private Player playerInstance;
     private Image image;
     private double angleRad;
-
 
     public Enemy(Image image, double x, double y) {
         super(x, y);
@@ -31,10 +29,8 @@ public abstract class Enemy extends Entity {
         //Rotate to player's direction if searching
         if (currentState == AIState.SEARCHING) {
             //Translate angle each tick in direction to the player
-            double angleToPlayer = getAngleToPlayer();
-            double deltaAngle = angleToPlayer - angleRad;
-            deltaAngle *= 0.005f;
-            angleRad += deltaAngle;
+            double angleToPlayer = getAngleToPlayer() - Math.PI / 2;
+
         }
     }
 
@@ -60,7 +56,7 @@ public abstract class Enemy extends Entity {
     private double getAngleToPlayer() {
         Vector2f playerPos = new Vector2f((float) playerInstance.getX(), (float) playerInstance.getY());
         Vector2f enemyPos  = new Vector2f((float) getX(), (float) getY());
-        Vector2f toPlayer = playerPos.sub(enemyPos);
-        return toPlayer.angle(VEC_RIGHT);
+        Vector2f dirToPlayer = playerPos.sub(enemyPos);
+        return Math.atan2(dirToPlayer.y, dirToPlayer.x) + Math.PI;
     }
 }
