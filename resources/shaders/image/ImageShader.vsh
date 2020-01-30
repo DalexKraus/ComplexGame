@@ -22,5 +22,5 @@ void main()
 		pass_textureCoordinates = textureCoordinates;
 	}
 
-	gl_Position = projectionMatrix * vec4(position, 1.0f);
+	gl_Position = projectionMatrix * vec4(position, 1.0);
 }
