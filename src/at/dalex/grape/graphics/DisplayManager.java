@@ -40,12 +40,17 @@ public class DisplayManager {
 	public static int windowWidth = 720;
 	public static int windowHeight = 480;
 
+	public static float mouseScaleX;
+	public static float mouseScaleY;
+
 	private String windowTitle = "Grape Engine";
 	private boolean useVerticalSync;
 
+	private final int GL_VERSION_MAJOR = 4;
+	private final int GL_VERSION_MINOR = 1;
+
 	/* GLFW Window Handle */
 	private long windowHandle;
-
 	private DisplayCallback callback_reference;
 
 	/* Timer instance, which is used to calculate delta time or count fps */
@@ -95,6 +100,7 @@ public class DisplayManager {
 	 * @throws RuntimeException When the window could not be created.
 	 */
 	public void createDisplay() {
+		System.out.println("========== [DisplayManager] ==========");
 		GLFWErrorCallback.createPrint(System.err).set();
 
 		if (!glfwInit()) {
@@ -102,8 +108,9 @@ public class DisplayManager {
 		}
 
 		//GL Version selection
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+		System.out.printf("Target OpenGL version: %14s.%s\n", GL_VERSION_MAJOR, GL_VERSION_MINOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSION_MAJOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
@@ -137,12 +144,10 @@ public class DisplayManager {
 		try (MemoryStack stack = stackPush()) {
 			IntBuffer pWidth = stack.mallocInt(1); //int*
 			IntBuffer pHeight = stack.mallocInt(1); //int*
-
 			glfwGetWindowSize(windowHandle, pWidth, pHeight);
 
-			GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
 			//Center the window
+			GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowPos(
 					windowHandle,
 					(vidMode.width() - pWidth.get(0)) / 2,
@@ -157,6 +162,23 @@ public class DisplayManager {
 
 		// Make the window visible
 		glfwShowWindow(windowHandle);
+		//On high-resolution displays the actual render resolution will be
+		//greater than the defined resolution in the GameInfo.txt
+		int[] width = new int[1], height = new int[1];
+		//Read the current size of the window in pixels
+		glfwGetFramebufferSize(windowHandle, width, height);
+		//As the resolution is scaled, the mouse position needs to be re-calculated as well
+		mouseScaleX = width[0]  / (float) windowWidth;
+		mouseScaleY = height[0] / (float) windowHeight;
+
+		//Debug information
+		System.out.printf("Target window size: %20s %-6s\n", windowWidth, windowHeight);
+		System.out.printf("Actual window size: %20s %-6s\n", width[0], height[0]);
+		System.out.printf("Mouse position scale value: %11s\n", mouseScaleX, mouseScaleY);
+
+		//Replace the engine's constants with the actual resolution
+		windowWidth = width[0];
+		windowHeight = height[0];
 
 		// Set the clear color
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
