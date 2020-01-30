@@ -2,8 +2,8 @@ package at.dalex.grape;
 
 import at.dalex.grape.gamestatemanager.PlayState;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class Launcher extends GrapeEngine {
 
@@ -39,12 +39,7 @@ public class Launcher extends GrapeEngine {
 
 		if (gameLocation.equals(".")) {
 			String path = Launcher.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-			try {
-				gameLocation = URLDecoder.decode(path, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				System.err.println("[BOOT] Could not decode game path. ('" + path + "')");
-				e.printStackTrace();
-			}
+			gameLocation = URLDecoder.decode(path, StandardCharsets.UTF_8);
 		}
 
 		gameLocation = gameLocation.replace("\\", "/");
