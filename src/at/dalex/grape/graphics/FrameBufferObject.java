@@ -83,7 +83,7 @@ public class FrameBufferObject {
 		//Change viewport to dimensions of the previously bound frame buffer
 		if (previousFrameBuffer != null) {
 			//Bind previous buffer
-			glBindFramebuffer(GL_FRAMEBUFFER, previousFrameBuffer.frameBufferID);
+			GL30.glBindFramebuffer(GL_FRAMEBUFFER, previousFrameBuffer.frameBufferID);
 
 			int viewportWidth = previousFrameBuffer.getWidth();
 			int viewportHeight = previousFrameBuffer.getHeight();

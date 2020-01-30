@@ -131,10 +131,11 @@ public class PlayState extends GameState {
 		worldBuffer.unbindFrameBuffer();
 
 		float rotationDeg = (float) Math.toDegrees(player.getPlayerRotation());
+		int excessWidth = worldBuffer.getWidth() - DisplayManager.windowWidth;
 		Graphics.drawRotatedImage(worldBuffer.getColorTextureID(),
-				0, 0,
-				1, 1,
-				0 /*rotationDeg*/, projectionMatrix);
+				-excessWidth / 2, 0,
+				worldBuffer.getWidth(), worldBuffer.getHeight(),
+				rotationDeg, projectionMatrix);
 
 		//Draw hud without view projection to remain static on screen
 		playerHud.draw(projectionMatrix);

@@ -2,7 +2,6 @@ package at.dalex.grape.graphics;
 
 import org.joml.Matrix4f;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
