@@ -3,6 +3,7 @@ package at.dalex.grape.graphics;
 import java.awt.Color;
 
 import at.dalex.grape.graphics.mesh.Model;
+import at.dalex.grape.graphics.shader.BatchShader;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 

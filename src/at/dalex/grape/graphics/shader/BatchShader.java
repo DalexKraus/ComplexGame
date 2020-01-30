@@ -1,7 +1,5 @@
 package at.dalex.grape.graphics.shader;
 
-import at.dalex.grape.resource.FileContentReader;
-
 public class BatchShader extends ShaderProgram {
 
     public int projectionMatrixLocation;
