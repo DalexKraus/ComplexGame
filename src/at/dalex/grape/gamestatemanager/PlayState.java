@@ -164,8 +164,8 @@ public class PlayState extends GameState {
 
 		//Calculate the vector from the camera pointing towards the player
 		Vector3f cameraOffset = playerPosition.sub(camera.getPosition());
-		//Move camera to target in one second
-		cameraOffset.mul((float) delta);
+		//Move camera to target in half a second
+		cameraOffset.mul((float) delta * 2);
 		//Scale that time to two seconds
 		cameraOffset.mul(2f);
 
@@ -181,6 +181,10 @@ public class PlayState extends GameState {
 
 			plane.getComponents().add(new ParallaxPlane.PlaneComponent(x, y, w, h, compImage));
 		}
+	}
+
+	public BulletManager getBulletManager() {
+		return this.bulletManager;
 	}
 
 	public Player getPlayer() {

@@ -3,7 +3,10 @@ package com.complex.entity;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.Graphics;
 import at.dalex.grape.graphics.Image;
+import at.dalex.grape.input.Input;
 import com.complex.ComplexGame;
+import com.complex.entity.bullet.Bullet;
+import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
 
 public class Enemy extends Entity {
@@ -19,6 +22,9 @@ public class Enemy extends Entity {
     @Override
     public void update(double delta) {
         aimAtPlayer();
+
+        if (Input.isButtonPressed(1))
+            shoot();
     }
 
     @Override
@@ -53,8 +59,14 @@ public class Enemy extends Entity {
 
         if (rotation < 0) {
             int revolutions = (int) (rotation / Math.PI * 2D);
-            rotation += (1 + revolutions) * Math.PI * 2D;
+            rotation += (1 + revolutions) * Math.PI * 2;
         }
+    }
+
+    protected void shoot() {
+        float angleDegrees = (float) Math.toDegrees(rotation);
+        Bullet spawnedBullet = new Bullet(getX(), getY(), angleDegrees, 4069f);
+        ComplexGame.getInstance().getPlayState().getBulletManager().spawnBullet(spawnedBullet);
     }
 
     /**
