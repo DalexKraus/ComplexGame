@@ -1,12 +1,11 @@
 package com.complex.entity;
 
+import at.dalex.grape.Launcher;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.Graphics;
 import at.dalex.grape.graphics.Image;
 import at.dalex.grape.input.Input;
-import com.complex.ComplexGame;
 import com.complex.entity.bullet.Bullet;
-import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
 
 public class Enemy extends Entity {
@@ -66,7 +65,7 @@ public class Enemy extends Entity {
     protected void shoot() {
         float angleDegrees = (float) Math.toDegrees(rotation);
         Bullet spawnedBullet = new Bullet(getX(), getY(), angleDegrees, 4069f);
-        ComplexGame.getInstance().getPlayState().getBulletManager().spawnBullet(spawnedBullet);
+        Launcher.getInstance().getPlayState().getBulletManager().spawnBullet(spawnedBullet);
     }
 
     /**
@@ -74,7 +73,7 @@ public class Enemy extends Entity {
      * @return The angle in radians
      */
     protected double getAngleToPlayer() {
-        Player playerInstance = ComplexGame.getInstance().getPlayState().getPlayer();
+        Player playerInstance = Launcher.getInstance().getPlayState().getPlayer();
         double dx = playerInstance.getX() - getX();
         double dy = playerInstance.getY() - getY();
         return Math.atan2(dy, dx);

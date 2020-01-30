@@ -1,7 +1,5 @@
 package at.dalex.grape;
 
-import at.dalex.grape.gamestatemanager.GameState;
-import at.dalex.grape.gamestatemanager.IntroState;
 import at.dalex.grape.gamestatemanager.PlayState;
 
 import java.io.UnsupportedEncodingException;
@@ -11,10 +9,12 @@ public class Launcher extends GrapeEngine {
 
 	private static String gameLocation = ".";
 	
-	private GameState playState;
+	private PlayState playState;
+	private static Launcher instance;
 	
 	public Launcher() {
 		super(gameLocation);
+		instance = this;
 		System.out.println(" --- Starting engine ---");
 		startEngine();
 	}
@@ -50,5 +50,13 @@ public class Launcher extends GrapeEngine {
 		gameLocation = gameLocation.replace("\\", "/");
 		System.out.println("[BOOT] Using game '" + gameLocation + "'");
 		new Launcher();
+	}
+
+	public PlayState getPlayState() {
+		return playState;
+	}
+
+	public static Launcher getInstance() {
+		return instance;
 	}
 }

@@ -4,6 +4,9 @@
 # The new terminal is handy to distinguish the maven output from the engine's.
 
 echo "Build Script - Version 1.0 [rev. 13.12.2019]"
+
+printf "\n\n\nSEVERE: This buildscript is outdated and does not compile correctly anymore!"
+
 #Use 4 threads for compiling
 mvn -T 4 install -f pom.xml
 
