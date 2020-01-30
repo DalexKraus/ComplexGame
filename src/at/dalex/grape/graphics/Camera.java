@@ -101,12 +101,13 @@ public class Camera {
 
 	/**
 	 * This method creates a view matrix using the camera's position
-	 * and combines (multiplies) it with the projection matrix.
+	 * and combines (multiplies) it with the passed matrix.
 	 *
-	 * @eturn The generated view matrix combined with the projection matrix.
+	 * @param projection The projection matrix for multiplication.
+	 * @return The generated view matrix combined with the projection matrix.
 	 */
-	public Matrix4f getProjectionAndViewMatrix() {
-		Matrix4f transformed = new Matrix4f(projectionMatrix);
+	public Matrix4f getProjectionAndViewMatrix(Matrix4f projection) {
+		Matrix4f transformed = new Matrix4f(projection);
 		float rot_translationX = 0.5f * DisplayManager.windowWidth  / 2;
 		float rot_translationY = 0.5f * DisplayManager.windowHeight / 2;
 
@@ -116,6 +117,16 @@ public class Camera {
 
 		transformed.translate(position.x * -0.5f, position.y * -0.5f, position.z * -0.5f);
 		return transformed;
+	}
+
+	/**
+	 * This method creates a view matrix using the camera's position
+	 * and combines (multiplies) it with the projection matrix.
+	 *
+	 * @return The generated view matrix combined with the projection matrix.
+	 */
+	public Matrix4f getProjectionAndViewMatrix() {
+		return getProjectionAndViewMatrix(this.projectionMatrix);
 	}
 
 	/**
