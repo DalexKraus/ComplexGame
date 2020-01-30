@@ -20,6 +20,10 @@ public class FrameBufferObject {
 	/* Every framebuffer needs a different projection matrix, as the dimensions are not the same */
 	private Matrix4f projectionMatrix;
 
+	/* The viewport needs to be adjusted to the previously bound framebuffer when unbinding the current one */
+	private FrameBufferObject previousFrameBuffer;
+	private static FrameBufferObject mostRecentlyBoundFrameBuffer;
+
 	public FrameBufferObject() {
 		this(DisplayManager.windowWidth, DisplayManager.windowHeight);
 	}
@@ -67,13 +71,28 @@ public class FrameBufferObject {
 	}
 
 	public void bindFrameBuffer() {
-		GL30.glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID);
+		GL30.glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
 		GL11.glViewport(0, 0, width, height);
+
+		previousFrameBuffer = mostRecentlyBoundFrameBuffer;
+		mostRecentlyBoundFrameBuffer = this;
 	}
 
 	public void unbindFrameBuffer() {
-		GL11.glViewport(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight);
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		mostRecentlyBoundFrameBuffer = previousFrameBuffer;
+		//Change viewport to dimensions of the previously bound frame buffer
+		if (previousFrameBuffer != null) {
+			//Bind previous buffer
+			glBindFramebuffer(GL_FRAMEBUFFER, previousFrameBuffer.frameBufferID);
+
+			int viewportWidth = previousFrameBuffer.getWidth();
+			int viewportHeight = previousFrameBuffer.getHeight();
+			glViewport(0, 0, viewportWidth, viewportHeight);
+		}
+		else {
+			glViewport(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight);
+			GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		}
 	}
 
 	public Matrix4f getProjectionMatrix() {
