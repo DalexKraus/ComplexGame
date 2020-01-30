@@ -6,24 +6,34 @@ import at.dalex.grape.graphics.Graphics;
 import at.dalex.grape.graphics.Image;
 import at.dalex.grape.input.Input;
 import com.complex.entity.bullet.Bullet;
+import com.complex.entity.bullet.LaserBullet;
+import com.complex.weapon.FireMode;
+import com.complex.weapon.WeaponCallback;
+import com.complex.weapon.WeaponController;
 import org.joml.Matrix4f;
 
-public class Enemy extends Entity {
+public class Enemy extends Entity implements WeaponCallback {
 
+    /* Miscellaneous */
     private Image image;
     private double rotation;
+
+    /* Shooting */
+    private WeaponController weaponController;
 
     public Enemy(Image image, double x, double y) {
         super(x, y);
         this.image = image;
+        this.weaponController = new WeaponController(this);
+        weaponController.setBulletsPerSecondBurst(16);
+        weaponController.setFireMode(FireMode.BURST_FIRE);
     }
 
     @Override
     public void update(double delta) {
-        aimAtPlayer();
-
-        if (Input.isButtonPressed(1))
-            shoot();
+        aimAtPlayer(delta);
+        weaponController.setShooting(Input.isButtonPressed(1));
+        weaponController.update(delta);
     }
 
     @Override
@@ -31,7 +41,13 @@ public class Enemy extends Entity {
         int size = Player.PLAYER_WIDTH;
         float angleDegrees = (float) Math.toDegrees(rotation);
         Graphics.enableBlending(true);
-        Graphics.drawRotatedImage(image, (int) getX(), (int) getY(), size, size, angleDegrees, projectionAndViewMatrix);
+        Graphics.drawRotatedImage(image, (int) getX() - size / 2, (int) getY() - size / 2, size, size, angleDegrees, projectionAndViewMatrix);
+    }
+
+    @Override
+    public void fireBullet(WeaponController weaponController) {
+        Bullet bullet = new LaserBullet((int) getX(), (int) getY(), rotation, 4069);
+        Launcher.getInstance().getPlayState().getBulletManager().spawnBullet(bullet);
     }
 
     /**
@@ -39,16 +55,16 @@ public class Enemy extends Entity {
      * To understand the math in here, please take a look at the following screenshot:
      * https://prnt.sc/qv2fni
      */
-    protected void aimAtPlayer() {
+    protected void aimAtPlayer(double delta) {
         double angleToPlayer = getAngleToPlayer() + Math.PI / 2D;
         double gamma = rotation - angleToPlayer;
         double phi = Math.PI * 2 - gamma;
 
         if (gamma > phi) {
-            rotation += (phi / 8D) * (Math.abs(phi) / Math.PI);
+            rotation += phi * delta * 6;
         }
         else {
-            rotation -= (gamma / 8D) * (Math.abs(gamma) / Math.PI);
+            rotation -= gamma * delta * 6;
         }
 
         if (rotation >= 360) {
@@ -60,12 +76,6 @@ public class Enemy extends Entity {
             int revolutions = (int) (rotation / Math.PI * 2D);
             rotation += (1 + revolutions) * Math.PI * 2;
         }
-    }
-
-    protected void shoot() {
-        float angleDegrees = (float) Math.toDegrees(rotation);
-        Bullet spawnedBullet = new Bullet(getX(), getY(), angleDegrees, 4069f);
-        Launcher.getInstance().getPlayState().getBulletManager().spawnBullet(spawnedBullet);
     }
 
     /**

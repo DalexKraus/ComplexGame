@@ -19,9 +19,9 @@ public class Bullet extends Entity {
     //Bullet spawn time in current milliseconds
     private long spawnTime;
 
-    public Bullet(double x, double y, float angle, float speed) {
+    public Bullet(double x, double y, double angleRad, float speed) {
         super(x, y);
-        this.angleRad = Math.toRadians(angle - 90f);
+        this.angleRad = angleRad - Math.PI / 2;
         this.speed = speed;
         this.bulletImage = ImageUtils.loadImage(new File("textures/bullet.png"));
         this.spawnTime = System.currentTimeMillis();

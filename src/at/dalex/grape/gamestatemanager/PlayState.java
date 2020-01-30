@@ -16,9 +16,7 @@ import com.complex.entity.bullet.Bullet;
 import com.complex.entity.bullet.LaserBullet;
 import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.system.windows.DISPLAY_DEVICE;
 
 import java.awt.*;
 import java.io.File;
@@ -51,8 +49,15 @@ public class PlayState extends GameState {
 	private ParallaxPlane plane4;
 	private ParallaxPlane plane5;
 
+	private FrameBufferObject worldBuffer;
+
 	@Override
 	public void init() {
+		float w = DisplayManager.windowHeight;
+		float h = DisplayManager.windowWidth;
+		int screenDiag = (int) Math.sqrt(w * w + h * h);
+		this.worldBuffer = new FrameBufferObject(screenDiag, screenDiag);
+
 		this.backgroundFBO = new FrameBufferObject();
 		this.hueShader = new HueShader();
 		this.background = Assets.get("sky.background", Image.class);
@@ -100,26 +105,36 @@ public class PlayState extends GameState {
 		int dW = DisplayManager.windowWidth;
 		int dH = DisplayManager.windowHeight;
 
-		Graphics.enableBlending(true);
-		//backgroundFBO.bindFrameBuffer();
+		worldBuffer.bindFrameBuffer();
 		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			Matrix4f worldViewMatrix = camera.getProjectionAndViewMatrix(worldBuffer.getProjectionMatrix());
 			Graphics.enableBlending(true);
-			Graphics.drawImage(background, 0, 0, dW, dH, backgroundFBO.getProjectionMatrix());
-			plane5.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
-			plane4.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
-			plane3.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
-			plane2.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
-			plane1.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+			backgroundFBO.bindFrameBuffer();
+			{
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				Graphics.enableBlending(true);
+				Graphics.drawImage(background, 0, 0, dW, dH, backgroundFBO.getProjectionMatrix());
+				plane5.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+				plane4.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+				plane3.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+				plane2.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
+				plane1.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 
-			entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
-			bulletManager.getBullets().forEach(bullet -> bullet.draw(projectionAndViewMatrix));
+				entities.forEach(ent -> ent.draw(worldViewMatrix));
+				bulletManager.getBullets().forEach(bullet -> bullet.draw(worldViewMatrix));
+			}
+			backgroundFBO.unbindFrameBuffer();
+
+			Matrix4f transformation = Graphics.transformMatrix(worldBuffer.getProjectionMatrix(), 0, 0, dW, dH, 0f);
+			hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
 		}
-		//backgroundFBO.unbindFrameBuffer();
+		worldBuffer.unbindFrameBuffer();
 
-		Matrix4f transformation = Graphics.transformMatrix(projectionMatrix, 0, 0, dW, dH, 0f);
-		//hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
-//		hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
+		float rotationDeg = (float) Math.toDegrees(player.getPlayerRotation());
+		Graphics.drawRotatedImage(worldBuffer.getColorTextureID(),
+				0, 0,
+				1, 1,
+				0 /*rotationDeg*/, projectionMatrix);
 
 		//Draw hud without view projection to remain static on screen
 		playerHud.draw(projectionMatrix);

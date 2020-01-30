@@ -1,6 +1,5 @@
 package com.complex.entity;
 
-import at.dalex.grape.GrapeEngine;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
 import at.dalex.grape.input.Input;
@@ -20,7 +19,7 @@ public class Player extends Entity {
     private final float PLAYER_SPEED_CAP = 720;
     private final float PLAYER_ACCELERATION = 1024;
 
-    private float playerRotation = 0.0f;
+    private double rotationRad;
     private Image playerImage;
     public static final int PLAYER_WIDTH = 64, PLAYER_HEIGHT = 64;
 
@@ -34,9 +33,10 @@ public class Player extends Entity {
 
     @Override
     public void draw(Matrix4f projectionAndViewMatrix) {
+        float angleDegrees = (float) Math.toDegrees(rotationRad);
         Graphics.enableBlending(true);
         Graphics.drawRotatedImage(playerImage, (int) getX() - PLAYER_WIDTH / 2, (int) getY() - PLAYER_HEIGHT / 2,
-                PLAYER_WIDTH, PLAYER_HEIGHT, playerRotation, projectionAndViewMatrix);
+                PLAYER_WIDTH, PLAYER_HEIGHT, angleDegrees, projectionAndViewMatrix);
 
         Graphics.enableBlending(false);
     }
@@ -65,18 +65,18 @@ public class Player extends Entity {
     private void handleInput(double delta) {
         boolean movementKeyDown = false;
         if (Input.isKeyDown(GLFW_KEY_W)) {
-            acceleration.y = -PLAYER_ACCELERATION;
+            circularAccelerate(rotationRad, -PLAYER_ACCELERATION);
             movementKeyDown = true;
         }
         if (Input.isKeyDown(GLFW_KEY_S)) {
-            acceleration.y = PLAYER_ACCELERATION;
+            circularAccelerate(rotationRad, PLAYER_ACCELERATION);
             movementKeyDown = true;
         }
         if (Input.isKeyDown(GLFW_KEY_A)) {
-            playerRotation += 360 * delta;
+            rotationRad += Math.PI * 2 * delta;
         }
         if (Input.isKeyDown(GLFW_KEY_D)) {
-            playerRotation -= 360 * delta;
+            rotationRad -= Math.PI * delta;
         }
 
         if (!movementKeyDown)
@@ -91,6 +91,12 @@ public class Player extends Entity {
 
 
 //        playerRotation = (float) Math.toDegrees(Math.atan2(dY, dX)) + 90f;
+    }
+
+    private void circularAccelerate(double angleRad, double amount) {
+        angleRad += Math.PI / 2;
+        Vector2f normalizedTranslation = new Vector2f((float) Math.cos(angleRad), (float) Math.sin(angleRad));
+        acceleration.set(normalizedTranslation.mul((float) amount));
     }
 
     public void applyDamage(int damage) {
@@ -108,8 +114,8 @@ public class Player extends Entity {
         return this.velocity;
     }
 
-    public float getPlayerRotation() {
-        return playerRotation;
+    public double getPlayerRotation() {
+        return rotationRad;
     }
 
     public int getHealth() {
