@@ -9,7 +9,7 @@
         <module name="ComplexGame" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11">
       <module name="ComplexGame" target="11" />
     </bytecodeTargetLevel>
   </component>
