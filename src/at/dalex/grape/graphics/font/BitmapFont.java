@@ -33,10 +33,11 @@ public class BitmapFont {
 
     private Image createFontTexture(Font font, boolean antiAlias) {
         this.fontSize = font.getSize();
+
         //Change atlas' font size to 128px for high resolution
         Font atlasFont = new Font(font.getFontName(), font.getStyle(), ATLAS_FONT_SIZE);
         BufferedImage image = new BufferedImage(2048, 2048, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
+        Graphics2D g = (Graphics2D) image.getGraphics();
 
         int x = 0, y = 0;
         for (int i = 32; i < 256; i++) {

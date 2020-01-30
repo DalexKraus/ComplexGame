@@ -1,7 +1,7 @@
 {
 	"GameInfo":
 	{
-		"title": "[OpenGL & GLFW] GrapeEngine",
+		"title": "Complex",
 		"window_width": "1280",
 		"window_height": "720",
 		"window_override": "true",

@@ -14,7 +14,6 @@ import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
  *
  * @author dalex
  */
-
 public abstract class ShaderProgram {
 
     public int programID;
@@ -22,8 +21,8 @@ public abstract class ShaderProgram {
     private int fragmentShaderID;
 
     public abstract void getAllUniformLocations();
-
     public abstract void bindAttributes();
+    
     private UniformLoader uniformLoader;
 
     public ShaderProgram(String vertexFile, String fragmentFile) {
@@ -79,7 +78,6 @@ public abstract class ShaderProgram {
         glCompileShader(shaderID);
         if (glGetShaderi(shaderID, GL_COMPILE_STATUS) == GL_FALSE) {
             System.out.printf("FAIL");
-
             System.err.println("\n\nAn error occured while compiling the shader!");
             System.err.println("Error-Log: \n" + glGetShaderInfoLog(shaderID));
         }
@@ -90,7 +88,7 @@ public abstract class ShaderProgram {
     private String appendGLSLConstants(String shaderCode) {
         //Pre-Multiplied constants to reduce calculations in the shaders
         ArrayList<String> shaderConstants = new ArrayList<>();
-        shaderConstants.add("#version 460");
+        shaderConstants.add("#version 410");
         shaderConstants.add("#define MATH_PI 3.1415926535897932384626433832795");
         shaderConstants.add("#define MATH_HALF_PI 1.57079632679489661923132169163975");
         shaderConstants.add("#define MATH_2_PI 6.283185307179586476925286766559");

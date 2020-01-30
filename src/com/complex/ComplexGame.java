@@ -10,7 +10,8 @@ import java.util.UUID;
 
 public class ComplexGame extends GrapeEngine {
 
-    private UUID gameState;
+    private PlayState playState;
+    private static ComplexGame instance;
 
     public ComplexGame(String gameLocation) {
         super(gameLocation);
@@ -18,7 +19,9 @@ public class ComplexGame extends GrapeEngine {
 
     @Override
     public void onEnable() {
-        GameState playState = new PlayState();
+        instance = this;
+
+        playState = new PlayState();
         getGameStateManager().addGameState(playState);
         getGameStateManager().setState(playState.getId());
     }
@@ -26,5 +29,13 @@ public class ComplexGame extends GrapeEngine {
     @Override
     public void onDisable() {
 
+    }
+
+    public PlayState getPlayState() {
+        return this.playState;
+    }
+
+    public static ComplexGame getInstance() {
+        return instance;
     }
 }

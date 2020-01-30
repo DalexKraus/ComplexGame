@@ -21,7 +21,7 @@ public class ImageUtils {
 		int textureId;
 		width = image.getWidth();
 		height = image.getHeight();
-		
+
 		int[] rawPixels = image.getRGB(0, 0, width, height, null, 0, width);
 
 		ByteBuffer pixelBuffer = BufferUtils.createByteBuffer(width * height * 4);

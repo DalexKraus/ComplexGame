@@ -31,7 +31,7 @@ public class Bullet extends Entity {
     public void draw(Matrix4f projectionAndViewMatrix) {
         Graphics.enableBlending(true);
 
-        double halfPlayerW = Player.PLAYER_WIDTH / 2D;
+        double halfPlayerW = Player.PLAYER_WIDTH  / 2D;
         double halfPlayerH = Player.PLAYER_HEIGHT / 2D;
         double xPos = Math.cos(angleRad) * halfPlayerW;
         double yPos = Math.sin(angleRad) * halfPlayerH - 10;

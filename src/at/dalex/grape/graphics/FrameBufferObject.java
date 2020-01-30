@@ -68,14 +68,12 @@ public class FrameBufferObject {
 
 	public void bindFrameBuffer() {
 		GL30.glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBufferID);
-//		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		GL11.glViewport(0, 0, width, height);
 	}
 
 	public void unbindFrameBuffer() {
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-//		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		GL11.glViewport(0, 0, DisplayManager.windowWidth, DisplayManager.windowHeight);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 
 	public Matrix4f getProjectionMatrix() {

@@ -16,7 +16,7 @@ import static org.lwjgl.BufferUtils.createFloatBuffer;
 
 public class BatchRenderer {
 
-    private static BatchShader shader = new BatchShader();
+    private static BatchShader shader;
     private ArrayList<BatchInfo> batchQueue = new ArrayList<>();
 
     private int vaoId;
@@ -113,6 +113,9 @@ public class BatchRenderer {
         //UV-Coord Scale Factor (vec2) - manipulates the dimensions of the uv-rectangle
         addInstancedAttribute(instanceVBOId, 10, 2, INSTANCE_DATA_LENGTH, 34);
         GL30.glBindVertexArray(0);
+
+        //Create shader
+        shader = new BatchShader();
     }
 
     private int createInstanceVBO(int floatCount) {

@@ -9,8 +9,8 @@ import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
 import at.dalex.grape.resource.Assets;
-import at.dalex.grape.toolbox.Toolbox;
 import com.complex.HUD;
+import com.complex.entity.Enemy;
 import com.complex.entity.Player;
 import com.complex.entity.bullet.Bullet;
 import com.complex.entity.bullet.LaserBullet;
@@ -21,6 +21,7 @@ import org.joml.Vector3f;
 import org.lwjgl.system.windows.DISPLAY_DEVICE;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -29,6 +30,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class PlayState extends GameState {
 
 	private Player player;
+	private Enemy enemy;
 	private ArrayList<Entity> entities = new ArrayList<>();
 	private HUD playerHud;
 
@@ -48,8 +50,6 @@ public class PlayState extends GameState {
 	private ParallaxPlane plane3;
 	private ParallaxPlane plane4;
 	private ParallaxPlane plane5;
-
-	private float angle;
 
 	@Override
 	public void init() {
@@ -83,7 +83,10 @@ public class PlayState extends GameState {
 		plane5.bufferComponents();
 
 		this.player = new Player(0, 0);
+		Image image = ImageUtils.loadImage(new File("textures/entity/player/player.png"));
+		this.enemy = new Enemy(image, 0, 0);
 		entities.add(player);
+		entities.add(enemy);
 
 		this.playerHud = new HUD(player);
 
@@ -98,7 +101,7 @@ public class PlayState extends GameState {
 		int dH = DisplayManager.windowHeight;
 
 		Graphics.enableBlending(true);
-		backgroundFBO.bindFrameBuffer();
+		//backgroundFBO.bindFrameBuffer();
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			Graphics.enableBlending(true);
@@ -112,14 +115,16 @@ public class PlayState extends GameState {
 			entities.forEach(ent -> ent.draw(projectionAndViewMatrix));
 			bulletManager.getBullets().forEach(bullet -> bullet.draw(projectionAndViewMatrix));
 		}
-		backgroundFBO.unbindFrameBuffer();
+		//backgroundFBO.unbindFrameBuffer();
 
 		Matrix4f transformation = Graphics.transformMatrix(projectionMatrix, 0, 0, dW, dH, 0f);
-		hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
+		//hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
 //		hueShader.drawMesh(scrollPos / 4069f, 0.25f, backgroundModel, transformation);
 
 		//Draw hud without view projection to remain static on screen
 		playerHud.draw(projectionMatrix);
+		//Graphics.fillRectangle(0, 0, 1920, 1080, Color.YELLOW, projectionMatrix);
+		Graphics.fillRectangle((int) Input.mousePosition.x, (int) Input.mousePosition.y, 16, 16, Color.YELLOW, projectionMatrix);
 	}
 
 	private boolean right = false;
@@ -132,9 +137,8 @@ public class PlayState extends GameState {
 		bulletManager.validateBullets();
 		playerHud.update(delta);
 
-		angle = (float) Math.toRadians(Input.mousePosition.y);
-
 		if (Input.isButtonPressed(1)) {
+
 			if (!right) {
 				//Spawn bullet
 				int xPos = (int) (player.getX());
@@ -154,27 +158,19 @@ public class PlayState extends GameState {
 		float dwH = DisplayManager.windowHeight / 2f;
 		float dwW = DisplayManager.windowWidth  / 2f;
 
-		/* Keep the camera relative to the player */
 		float px = (float) (player.getX() - dwW);
 		float py = (float) (player.getY() - dwH);
 		Vector3f playerPosition = new Vector3f(px, py, 0f);
 
 		//Calculate the vector from the camera pointing towards the player
 		Vector3f cameraOffset = playerPosition.sub(camera.getPosition());
-		//Move camera to target in one second
-		cameraOffset.mul((float) delta);
+		//Move camera to target in half a second
+		cameraOffset.mul((float) delta * 2);
 		//Scale that time to two seconds
 		cameraOffset.mul(2f);
 
 		//Finally, translate the camera in that direction
 		camera.translate(cameraOffset);
-
-		/* Keep the camera's rotation relative to the player */
-		float prevRot = angle;
-		camera.setRotation(angle);
-
-//		Toolbox.rotateProjectionMatrix(backgroundFBO.getProjectionMatrix(), -prevRot, dwW, dwH);
-		Toolbox.rotateProjectionMatrix(backgroundFBO.getProjectionMatrix(), angle, dwW, dwH);
 	}
 
 	private void placeComponentsOnPlane(ParallaxPlane plane, Image compImage, int w, int h, int count) {
@@ -185,5 +181,13 @@ public class PlayState extends GameState {
 
 			plane.getComponents().add(new ParallaxPlane.PlaneComponent(x, y, w, h, compImage));
 		}
+	}
+
+	public BulletManager getBulletManager() {
+		return this.bulletManager;
+	}
+
+	public Player getPlayer() {
+		return this.player;
 	}
 }
