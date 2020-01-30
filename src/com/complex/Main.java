@@ -14,7 +14,6 @@ public class Main {
         int lastSeparatorIndex = editorPath.lastIndexOf('/');
         File editor_executable_directory = new File(editorPath.substring(0, lastSeparatorIndex));
 
-
         ComplexGame gameInstance = new ComplexGame(editor_executable_directory.getAbsolutePath());
         gameInstance.startEngine();
     }
