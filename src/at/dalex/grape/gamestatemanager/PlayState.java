@@ -9,6 +9,7 @@ import at.dalex.grape.graphics.mesh.TexturedModel;
 import at.dalex.grape.graphics.shader.HueShader;
 import at.dalex.grape.input.Input;
 import at.dalex.grape.resource.Assets;
+import at.dalex.grape.toolbox.Toolbox;
 import com.complex.HUD;
 import com.complex.entity.Enemy;
 import com.complex.entity.Player;
@@ -18,7 +19,6 @@ import com.complex.manager.BulletManager;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
@@ -57,8 +57,9 @@ public class PlayState extends GameState {
 		float h = DisplayManager.windowWidth;
 		int screenDiag = (int) Math.sqrt(w * w + h * h);
 		this.worldBuffer = new FrameBufferObject(screenDiag, screenDiag);
+//		this.worldBuffer = new FrameBufferObject(DisplayManager.windowWidth / 2, DisplayManager.windowHeight / 2);
 
-		this.backgroundFBO = new FrameBufferObject();
+		this.backgroundFBO = new FrameBufferObject(worldBuffer.getWidth(), worldBuffer.getHeight());
 		this.hueShader = new HueShader();
 		this.background = Assets.get("sky.background", Image.class);
 		this.backgroundModel = Graphics.getFrameBufferModel(backgroundFBO);
@@ -125,22 +126,23 @@ public class PlayState extends GameState {
 			}
 			backgroundFBO.unbindFrameBuffer();
 
-			Matrix4f transformation = Graphics.transformMatrix(worldBuffer.getProjectionMatrix(), 0, 0, dW, dH, 0f);
-			hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
+//			Matrix4f transformation = Graphics.transformMatrix(worldBuffer.getProjectionMatrix(), 0, 0, dW, dH, 0f);
+//			hueShader.drawMesh(scrollPos / 4069f, 0.75f, backgroundModel, transformation);
+			Graphics.drawFrameBufferObject(backgroundFBO, 0, 0, backgroundFBO.getWidth(), backgroundFBO.getHeight(), worldBuffer.getProjectionMatrix());
 		}
 		worldBuffer.unbindFrameBuffer();
 
-		float rotationDeg = (float) Math.toDegrees(player.getPlayerRotation());
 		int excessWidth = worldBuffer.getWidth() - DisplayManager.windowWidth;
-		Graphics.drawRotatedImage(worldBuffer.getColorTextureID(),
-				-excessWidth / 2, 0,
-				worldBuffer.getWidth(), worldBuffer.getHeight(),
-				rotationDeg, projectionMatrix);
+		int excessHeight = worldBuffer.getHeight() - DisplayManager.windowHeight;
+		int pivotX = DisplayManager.windowWidth / 2;
+		int pivotY = DisplayManager.windowHeight / 2;
+		Matrix4f rotationMatrix = new Matrix4f(projectionMatrix);
+		Toolbox.rotateProjectionMatrix(rotationMatrix, (float) (player.getPlayerRotation() + Math.PI), pivotX, pivotY);
+		Graphics.drawImage(worldBuffer.getColorTextureID(), -excessWidth / 2, -excessHeight / 2, worldBuffer.getWidth(), worldBuffer.getHeight(), rotationMatrix);
 
 		//Draw hud without view projection to remain static on screen
 		playerHud.draw(projectionMatrix);
 		//Graphics.fillRectangle(0, 0, 1920, 1080, Color.YELLOW, projectionMatrix);
-		Graphics.fillRectangle((int) Input.mousePosition.x, (int) Input.mousePosition.y, 16, 16, Color.YELLOW, projectionMatrix);
 	}
 
 	private boolean right = false;
@@ -154,7 +156,6 @@ public class PlayState extends GameState {
 		playerHud.update(delta);
 
 		if (Input.isButtonPressed(1)) {
-
 			if (!right) {
 				//Spawn bullet
 				int xPos = (int) (player.getX());
@@ -171,8 +172,8 @@ public class PlayState extends GameState {
 	 * Updates the position of the camera in space, always trying to keep the player in focus.
 	 */
 	private void updateCamera(double delta) {
-		float dwH = DisplayManager.windowHeight / 2f;
-		float dwW = DisplayManager.windowWidth  / 2f;
+		float dwH = worldBuffer.getWidth() 	/ 2f;
+		float dwW = worldBuffer.getHeight() / 2f;
 
 		float px = (float) (player.getX() - dwW);
 		float py = (float) (player.getY() - dwH);
@@ -180,8 +181,8 @@ public class PlayState extends GameState {
 
 		//Calculate the vector from the camera pointing towards the player
 		Vector3f cameraOffset = playerPosition.sub(camera.getPosition());
-		//Move camera to target in half a second
-		cameraOffset.mul((float) delta * 2);
+		//Move camera to target in 166ms
+		cameraOffset.mul((float) delta * 6);
 		//Scale that time to two seconds
 		cameraOffset.mul(2f);
 
