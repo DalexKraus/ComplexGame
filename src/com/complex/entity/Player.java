@@ -19,7 +19,15 @@ public class Player extends Entity {
     private final float PLAYER_SPEED_CAP = 720;
     private final float PLAYER_ACCELERATION = 1024;
 
+    /* Rotation */
     private double rotationRad;
+    private double rotationVelocity;
+    private double rotationAcceleration;
+    private final double ROTATION_FALLOFF = 0.5D;
+    private final double ROTATION_SPEED_CAP = Math.PI;
+    private final double ROTATION_ACCELERATION = Math.PI * 1.5;
+
+    /* Miscellaneous */
     private Image playerImage;
     public static final int PLAYER_WIDTH = 64, PLAYER_HEIGHT = 64;
 
@@ -45,6 +53,7 @@ public class Player extends Entity {
     public void update(double delta) {
         handleInput(delta);
 
+        /* Update movement stuff */
         //Apply acceleration
         if (velocity.length() < PLAYER_SPEED_CAP) {
             velocity.x += (float) (acceleration.x * delta);
@@ -60,10 +69,21 @@ public class Player extends Entity {
         //Apply velocity falloff
         float velocityFalloffFactor = (float) (1f - VELOCITY_FALLOFF * delta);
         velocity.mul(velocityFalloffFactor);
+
+        /* Update rotation stuff */
+        if (rotationVelocity < ROTATION_SPEED_CAP) {
+            rotationVelocity += rotationAcceleration * delta;
+        }
+        this.rotationRad += rotationVelocity * delta;
+
+        //Apply rotation velocity falloff
+        double rotationVelocityFalloffFactor = 1D - ROTATION_FALLOFF * delta;
+        rotationVelocity *= rotationVelocityFalloffFactor;
     }
 
     private void handleInput(double delta) {
         boolean movementKeyDown = false;
+        boolean rotationKeyDown = false;
         if (Input.isKeyDown(GLFW_KEY_W)) {
             circularAccelerate(rotationRad, -PLAYER_ACCELERATION);
             movementKeyDown = true;
@@ -73,14 +93,19 @@ public class Player extends Entity {
             movementKeyDown = true;
         }
         if (Input.isKeyDown(GLFW_KEY_A)) {
-            rotationRad += Math.PI * 2 * delta;
+            rotationAcceleration = ROTATION_ACCELERATION;
+            rotationKeyDown = true;
         }
         if (Input.isKeyDown(GLFW_KEY_D)) {
-            rotationRad -= Math.PI * delta;
+            rotationAcceleration = -ROTATION_ACCELERATION;
+            rotationKeyDown = true;
         }
 
         if (!movementKeyDown)
             acceleration.set(0, 0);
+
+        if (!rotationKeyDown)
+            rotationAcceleration = 0;
 
         //Update player rotation
 //        Camera camera = GrapeEngine.getEngine().getCamera();
