@@ -2,11 +2,14 @@ package com.complex.entity;
 
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
+import at.dalex.grape.graphics.Graphics;
+import at.dalex.grape.graphics.Image;
 import at.dalex.grape.input.Input;
 import com.complex.entity.bullet.Bullet;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
+import java.awt.*;
 import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -48,15 +51,13 @@ public class Player extends Entity implements Hurtable {
         Graphics.drawRotatedImage(playerImage, (int) getX() - PLAYER_WIDTH / 2, (int) getY() - PLAYER_HEIGHT / 2,
                 PLAYER_WIDTH, PLAYER_HEIGHT, angleDegrees, projectionAndViewMatrix);
 
+        Graphics.fillRectangle(getBounds().x, getBounds().y, (int) getBounds().getWidth(), (int) getBounds().getHeight(), Color.MAGENTA, projectionAndViewMatrix);
+
         Graphics.enableBlending(false);
     }
 
     @Override
     public void update(double delta) {
-        //Update bounds
-        int size = Player.PLAYER_WIDTH;
-        setBounds((int) getX() - size / 2f, (int) getY() - size / 2f, size, size);
-
         handleInput(delta);
 
         /* Update movement stuff */
@@ -85,6 +86,10 @@ public class Player extends Entity implements Hurtable {
         //Apply rotation velocity falloff
         double rotationVelocityFalloffFactor = 1D - ROTATION_FALLOFF * delta;
         rotationVelocity *= rotationVelocityFalloffFactor;
+
+        //Update bounds
+        int size = Player.PLAYER_WIDTH;
+        setBounds((int) getX() - size / 2f, (int) getY() - size / 2f, size, size);
     }
 
     private void handleInput(double delta) {
