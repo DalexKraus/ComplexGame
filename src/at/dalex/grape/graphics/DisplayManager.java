@@ -89,7 +89,7 @@ public class DisplayManager {
 		}
 
 		//Change VSync if set in GameInfo.txt
-		useVerticalSync = Boolean.valueOf(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync"));
+		useVerticalSync = Boolean.parseBoolean(GrapeEngine.getEngine().getGameInfo().getValue("use_vsync"));
 		timer = new Timer(); //Create timer
 	}
 
