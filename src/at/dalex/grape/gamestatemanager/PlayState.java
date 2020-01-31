@@ -57,7 +57,6 @@ public class PlayState extends GameState {
 		float h = DisplayManager.windowWidth;
 		int screenDiag = (int) Math.sqrt(w * w + h * h);
 		this.worldBuffer = new FrameBufferObject(screenDiag, screenDiag);
-//		this.worldBuffer = new FrameBufferObject(DisplayManager.windowWidth / 2, DisplayManager.windowHeight / 2);
 
 		this.backgroundFBO = new FrameBufferObject(worldBuffer.getWidth(), worldBuffer.getHeight());
 		this.hueShader = new HueShader();
@@ -103,9 +102,6 @@ public class PlayState extends GameState {
 
 	@Override
 	public void draw(Matrix4f projectionAndViewMatrix) {
-		int dW = DisplayManager.windowWidth;
-		int dH = DisplayManager.windowHeight;
-
 		worldBuffer.bindFrameBuffer();
 		{
 			Matrix4f worldViewMatrix = camera.getProjectionAndViewMatrix(worldBuffer.getProjectionMatrix());
@@ -114,7 +110,7 @@ public class PlayState extends GameState {
 			{
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				Graphics.enableBlending(true);
-				Graphics.drawImage(background, 0, 0, dW, dH, backgroundFBO.getProjectionMatrix());
+				drawBackgroundImage(backgroundFBO.getProjectionMatrix());
 				plane5.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 				plane4.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
 				plane3.drawPlane(scrollPos, backgroundFBO.getProjectionMatrix());
@@ -142,7 +138,6 @@ public class PlayState extends GameState {
 
 		//Draw hud without view projection to remain static on screen
 		playerHud.draw(projectionMatrix);
-		//Graphics.fillRectangle(0, 0, 1920, 1080, Color.YELLOW, projectionMatrix);
 	}
 
 	private boolean right = false;
@@ -166,6 +161,14 @@ public class PlayState extends GameState {
 				right = true;
 			}
 		} else right = false;
+	}
+
+	private void drawBackgroundImage(Matrix4f projectionMatrix) {
+		float imageAspect = (float) background.getWidth() / (float) background.getHeight();
+		int targetHeight  = worldBuffer.getHeight();
+		int targetWidth   = (int) (targetHeight * imageAspect);
+		int imageOffset   = -(targetWidth - worldBuffer.getWidth()) / 2;
+		Graphics.drawImage(background, imageOffset, 0, targetWidth, targetHeight, projectionMatrix);
 	}
 
 	/**
