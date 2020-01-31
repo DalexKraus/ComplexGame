@@ -3,6 +3,7 @@ package com.complex.entity;
 import at.dalex.grape.entity.Entity;
 import at.dalex.grape.graphics.*;
 import at.dalex.grape.input.Input;
+import com.complex.entity.bullet.Bullet;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -10,7 +11,7 @@ import java.io.File;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Player extends Entity {
+public class Player extends Entity implements Hurtable {
 
     /* Movement */
     private Vector2f acceleration = new Vector2f();
@@ -36,6 +37,7 @@ public class Player extends Entity {
 
     public Player(double x, double y) {
         super(x, y);
+        setBounds(x, y, PLAYER_WIDTH, PLAYER_HEIGHT);
         this.playerImage = ImageUtils.loadImage(new File("textures/entity/player/player.png"));
     }
 
@@ -51,6 +53,10 @@ public class Player extends Entity {
 
     @Override
     public void update(double delta) {
+        //Update bounds
+        int size = Player.PLAYER_WIDTH;
+        setBounds((int) getX() - size / 2f, (int) getY() - size / 2f, size, size);
+
         handleInput(delta);
 
         /* Update movement stuff */
@@ -119,6 +125,16 @@ public class Player extends Entity {
         if (health <= 0) {
             onDeath();
         }
+    }
+
+    @Override
+    public void onHit(Bullet bullet, Entity shooter) {
+        if (shooter instanceof Player)
+            return;
+
+        System.out.println("player was hit");
+
+        applyDamage(5);
     }
 
     private void onDeath() {

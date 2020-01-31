@@ -21,6 +21,7 @@ import org.joml.Vector3f;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -156,9 +157,8 @@ public class PlayState extends GameState {
 				//Spawn bullet
 				int xPos = (int) (player.getX());
 				int yPos = (int) (player.getY());
-				Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 6144);
+				Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 6144, player);
 				bulletManager.spawnBullet(bullet);
-				player.applyDamage(5);
 				right = true;
 			}
 		} else right = false;
@@ -215,5 +215,9 @@ public class PlayState extends GameState {
 
 	public Player getPlayer() {
 		return this.player;
+	}
+
+	public Iterator<Entity> getEntities() {
+		return entities.iterator();
 	}
 }

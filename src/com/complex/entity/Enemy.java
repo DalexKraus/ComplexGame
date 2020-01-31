@@ -12,17 +12,22 @@ import com.complex.weapon.WeaponCallback;
 import com.complex.weapon.WeaponController;
 import org.joml.Matrix4f;
 
-public class Enemy extends Entity implements WeaponCallback {
+import java.awt.*;
+
+public class Enemy extends Entity implements WeaponCallback, Hurtable {
 
     /* Miscellaneous */
     private Image image;
     private double rotation;
+    private final int WIDTH = Player.PLAYER_WIDTH;
+    private final int HEIGHT = Player.PLAYER_HEIGHT;
 
     /* Shooting */
     private WeaponController weaponController;
 
     public Enemy(Image image, double x, double y) {
         super(x, y);
+        setBounds(x, y, WIDTH, HEIGHT);
         this.image = image;
         this.weaponController = new WeaponController(this);
         weaponController.setBulletsPerSecondBurst(16);
@@ -31,6 +36,10 @@ public class Enemy extends Entity implements WeaponCallback {
 
     @Override
     public void update(double delta) {
+        //Update bounds
+        int size = Player.PLAYER_WIDTH;
+        setBounds((int) getX() - size / 2f, (int) getY() - size / 2f, size, size);
+
         aimAtPlayer(delta);
         weaponController.setShooting(Input.isButtonPressed(1));
         weaponController.update(delta);
@@ -42,12 +51,19 @@ public class Enemy extends Entity implements WeaponCallback {
         float angleDegrees = (float) Math.toDegrees(rotation);
         Graphics.enableBlending(true);
         Graphics.drawRotatedImage(image, (int) getX() - size / 2, (int) getY() - size / 2, size, size, angleDegrees, projectionAndViewMatrix);
+
+        Graphics.fillRectangle(getBounds().x, getBounds().y, (int) getBounds().getWidth(), (int) getBounds().getHeight(), Color.YELLOW, projectionAndViewMatrix);
     }
 
     @Override
     public void fireBullet(WeaponController weaponController) {
-        Bullet bullet = new LaserBullet((int) getX(), (int) getY(), rotation, 6144);
+        Bullet bullet = new LaserBullet((int) getX(), (int) getY(), rotation, 6144, this);
         Launcher.getInstance().getPlayState().getBulletManager().spawnBullet(bullet);
+    }
+
+    @Override
+    public void onHit(Bullet bullet, Entity shooter) {
+        System.out.println("ENEMEY HIT!");
     }
 
     /**
@@ -88,4 +104,5 @@ public class Enemy extends Entity implements WeaponCallback {
         double dy = playerInstance.getY() - getY();
         return Math.atan2(dy, dx);
     }
+
 }

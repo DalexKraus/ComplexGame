@@ -32,6 +32,7 @@ public abstract class Entity implements ITickable {
 
 	public void setX(double x) {
 		this.x = x;
+		setBounds(x, getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
 	}
 	
 	public double getY() {
@@ -40,6 +41,7 @@ public abstract class Entity implements ITickable {
 	
 	public void setY(double y) {
 		this.y = y;
+		setBounds(getX(), y, (int) bounds.getWidth(), (int) bounds.getHeight());
 	}
 
 	public Vector4f getScreenSpacePosition() {

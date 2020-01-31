@@ -17,14 +17,17 @@ public class Bullet extends Entity {
     private float speed;
 
     //Bullet spawn time in current milliseconds
+    private Entity shooter;
     private long spawnTime;
 
-    public Bullet(double x, double y, double angleRad, float speed) {
+    public Bullet(double x, double y, double angleRad, float speed, Entity shooter) {
         super(x, y);
         this.angleRad = angleRad - Math.PI / 2;
         this.speed = speed;
         this.bulletImage = ImageUtils.loadImage(new File("textures/bullet.png"));
         this.spawnTime = System.currentTimeMillis();
+        this.shooter = shooter;
+        setBounds(x, y, bulletImage.getWidth(), bulletImage.getHeight());
     }
 
     @Override
@@ -53,5 +56,9 @@ public class Bullet extends Entity {
 
     public long getLifetime() {
         return System.currentTimeMillis() - spawnTime;
+    }
+
+    public Entity getShooter() {
+        return shooter;
     }
 }
