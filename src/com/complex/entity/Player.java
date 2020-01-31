@@ -50,9 +50,6 @@ public class Player extends Entity implements Hurtable {
         Graphics.enableBlending(true);
         Graphics.drawRotatedImage(playerImage, (int) getX() - PLAYER_WIDTH / 2, (int) getY() - PLAYER_HEIGHT / 2,
                 PLAYER_WIDTH, PLAYER_HEIGHT, angleDegrees, projectionAndViewMatrix);
-
-        Graphics.fillRectangle(getBounds().x, getBounds().y, (int) getBounds().getWidth(), (int) getBounds().getHeight(), Color.MAGENTA, projectionAndViewMatrix);
-
         Graphics.enableBlending(false);
     }
 

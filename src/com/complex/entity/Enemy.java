@@ -12,8 +12,6 @@ import com.complex.weapon.WeaponCallback;
 import com.complex.weapon.WeaponController;
 import org.joml.Matrix4f;
 
-import java.awt.*;
-
 public class Enemy extends Entity implements WeaponCallback, Hurtable {
 
     /* Miscellaneous */
@@ -51,8 +49,6 @@ public class Enemy extends Entity implements WeaponCallback, Hurtable {
         float angleDegrees = (float) Math.toDegrees(rotation);
         Graphics.enableBlending(true);
         Graphics.drawRotatedImage(image, (int) getX() - size / 2, (int) getY() - size / 2, size, size, angleDegrees, projectionAndViewMatrix);
-
-        Graphics.fillRectangle(getBounds().x, getBounds().y, (int) getBounds().getWidth(), (int) getBounds().getHeight(), Color.YELLOW, projectionAndViewMatrix);
     }
 
     @Override
