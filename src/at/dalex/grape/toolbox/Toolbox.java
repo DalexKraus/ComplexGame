@@ -32,9 +32,11 @@ public class Toolbox {
 	}
 
 	public static void rotateProjectionMatrix(Matrix4f projection, float rotRad, float rX, float rY) {
-		projection.translate(rX, rY, 0);
+		float translationX = rX / 2f;
+		float translationY = rY / 2f;
+		projection.translate(translationX, translationY, 0);
 		projection.rotateZ(rotRad);
-		projection.translate(-rX, -rY, 0);
+		projection.translate(-translationX, -translationY, 0);
 	}
 
 	public static float[] convertMatrixToArray(Matrix4f matrix) {
