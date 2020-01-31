@@ -46,7 +46,7 @@ public class Enemy extends Entity implements WeaponCallback {
 
     @Override
     public void fireBullet(WeaponController weaponController) {
-        Bullet bullet = new LaserBullet((int) getX(), (int) getY(), rotation, 4069);
+        Bullet bullet = new LaserBullet((int) getX(), (int) getY(), rotation, 6144);
         Launcher.getInstance().getPlayState().getBulletManager().spawnBullet(bullet);
     }
 

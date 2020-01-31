@@ -33,6 +33,7 @@ public class PlayState extends GameState {
 	private HUD playerHud;
 
 	private Camera camera;
+	private double cameraRotation;
 	private Matrix4f projectionMatrix;
 
 	private BulletManager bulletManager = new BulletManager();
@@ -133,7 +134,7 @@ public class PlayState extends GameState {
 		int pivotX = DisplayManager.windowWidth / 2;
 		int pivotY = DisplayManager.windowHeight / 2;
 		Matrix4f rotationMatrix = new Matrix4f(projectionMatrix);
-		Toolbox.rotateProjectionMatrix(rotationMatrix, (float) (player.getPlayerRotation() + Math.PI), pivotX, pivotY);
+		Toolbox.rotateProjectionMatrix(rotationMatrix, (float) (cameraRotation + Math.PI), pivotX, pivotY);
 		Graphics.drawImage(worldBuffer.getColorTextureID(), -excessWidth / 2, -excessHeight / 2, worldBuffer.getWidth(), worldBuffer.getHeight(), rotationMatrix);
 
 		//Draw hud without view projection to remain static on screen
@@ -155,7 +156,7 @@ public class PlayState extends GameState {
 				//Spawn bullet
 				int xPos = (int) (player.getX());
 				int yPos = (int) (player.getY());
-				Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 4069);
+				Bullet bullet = new LaserBullet(xPos, yPos, player.getPlayerRotation(), 6144);
 				bulletManager.spawnBullet(bullet);
 				player.applyDamage(5);
 				right = true;
@@ -191,6 +192,11 @@ public class PlayState extends GameState {
 
 		//Finally, translate the camera in that direction
 		camera.translate(cameraOffset);
+
+		/* Slowly rotate the camera to keep the player upright */
+        double angleDifference = player.getPlayerRotation() - cameraRotation;
+        angleDifference *= (delta * 4);
+        this.cameraRotation += angleDifference;
 	}
 
 	private void placeComponentsOnPlane(ParallaxPlane plane, Image compImage, int w, int h, int count) {

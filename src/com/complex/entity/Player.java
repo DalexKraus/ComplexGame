@@ -23,7 +23,7 @@ public class Player extends Entity {
     private double rotationRad;
     private double rotationVelocity;
     private double rotationAcceleration;
-    private final double ROTATION_FALLOFF = 0.5D;
+    private final double ROTATION_FALLOFF = 0.9D;
     private final double ROTATION_SPEED_CAP = Math.PI;
     private final double ROTATION_ACCELERATION = Math.PI * 1.5;
 
@@ -106,16 +106,6 @@ public class Player extends Entity {
 
         if (!rotationKeyDown)
             rotationAcceleration = 0;
-
-        //Update player rotation
-//        Camera camera = GrapeEngine.getEngine().getCamera();
-//        float mouseX = Input.getMousePosition().x + camera.getPosition().x;
-//        float mouseY = Input.getMousePosition().y + camera.getPosition().y;
-//        double dX = mouseX - getX();
-//        double dY = mouseY - getY();
-
-
-//        playerRotation = (float) Math.toDegrees(Math.atan2(dY, dX)) + 90f;
     }
 
     private void circularAccelerate(double angleRad, double amount) {
