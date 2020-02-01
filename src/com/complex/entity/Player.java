@@ -27,9 +27,9 @@ public class Player extends Entity implements Hurtable {
     private double rotationRad;
     private double rotationVelocity;
     private double rotationAcceleration;
-    private final double ROTATION_FALLOFF = 0.9D;
+    private final double ROTATION_FALLOFF = 2D;
     private final double ROTATION_SPEED_CAP = Math.PI;
-    private final double ROTATION_ACCELERATION = Math.PI * 1.5;
+    private final double ROTATION_ACCELERATION = Math.PI * 3;
 
     /* Miscellaneous */
     private Image playerImage;
